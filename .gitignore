@@ -1,0 +1,5 @@
+# VIM #
+*.swp
+
+.DS_Store
+go-cry-ade01b0b9a7c.json
