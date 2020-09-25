@@ -17,7 +17,6 @@ package main
 import (
 	"trading/client"
 	"trading/spreadsheet"
-	//"log"
 )
 
 func checkError(err error) {
@@ -26,14 +25,16 @@ func checkError(err error) {
 	}
 }
 
-func main() {
-
+func updateCandles() {
 	_, bitfinex := client.ConnectionBitfinex()
 	sh := client.ConnectionGoogle("1yLdidIUEIVJNVnSmMTKkALBj76cF8bI_HSGoR0QmFUg")
 	sheet, _ := sh.SheetByTitle("ETH-20DMA")
-
 	candles := spreadsheet.GetCandles(bitfinex, "tETHUSD", sheet)
 	//trades := spreadsheet.ReadCsv()
 	spreadsheet.WriteCandles(candles, sheet)
 	//spreadsheet.MoveTrades(4, sheet, sheetSold)
+}
+
+func main() {
+	updateCandles()
 }

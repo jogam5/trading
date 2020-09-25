@@ -48,7 +48,7 @@ func GetCandles(bitfinex *rest.Client, coin string, sheet *spreadsheet.Sheet) []
 	id := 1
 	candles := []models.Candle{}
 	for _, v := range candlesHist.Snapshot {
-		log.Println(v)
+		//log.Println(v)
 		var c models.Candle
 		c = models.Candle{
 			Id:        id,
@@ -73,7 +73,6 @@ func WriteCandles(candles []models.Candle, sheet *spreadsheet.Sheet) {
 	beginRow := int(ReturnLastCell(0, sheet).Row) + 1
 	for _, candle := range candles {
 		toFind := candle.Timestamp
-		/* Only BUY trades */
 		found := false
 		for _, row := range sheet.Rows {
 			for _, cell := range row {
