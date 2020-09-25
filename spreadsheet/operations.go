@@ -11,7 +11,7 @@ import (
 	"log"
 	//"os"
 	//"path/filepath"
-	//"sort"
+	"sort"
 	"time"
 )
 
@@ -41,43 +41,57 @@ func timestampToTime(msTime int64) string {
 Fetch current price from Bitfinex and update table
 ==
 */
-func GetPrice(bitfinex *rest.Client, coin string, sheet *spreadsheet.Sheet) []models.Candle {
-	//r, e := bitfinex.Tickers.Get(coin)
-	//checkError(e)
+func GetCandles(bitfinex *rest.Client, coin string, sheet *spreadsheet.Sheet) []models.Candle {
 	candlesHist, _ := bitfinex.Candles.History("tETHUSD", "1h")
 	//log.Println(candles.Snapshot[0])
 	//log.Println(timestampToTime(candles.Snapshot[0].MTS))
-
 	id := 1
 	candles := []models.Candle{}
 	for _, v := range candlesHist.Snapshot {
 		log.Println(v)
 		var c models.Candle
-		c = models.Candle {
-			Id: id,
+		c = models.Candle{
+			Id:        id,
 			Timestamp: Int64ToS(v.MTS),
-			Time: timestampToTime(v.MTS),
-			Open: FToS(v.Open),
-			Close: FToS(v.Close),
+			Time:      timestampToTime(v.MTS),
+			Open:      FToS(v.Open),
+			Close:     FToS(v.Close),
 		}
 		candles = append(candles, c)
 		id = id + 1
 	}
-	log.Println(candles)
+	sort.Sort(sort.Reverse(models.ById(candles)))
 	return candles
 }
 
-		/*pair := "t" + v.Coin + v.Base
-		log.Println(pair)
-
-		r, e := bitfinex.Tickers.Get(pair)
-		checkError(e)
-		sheet.Update(v.Row, 12, ToS(r.LastPrice))
-		i += 1
-		if i%29 == 0 {
-			time.Sleep(50 * time.Second)
+/*
+==
+Receive candles and write them in spreadsheet
+==
+*/
+func WriteCandles(candles []models.Candle, sheet *spreadsheet.Sheet) {
+	beginRow := int(ReturnLastCell(0, sheet).Row) + 1
+	for _, candle := range candles {
+		toFind := candle.Timestamp
+		/* Only BUY trades */
+		found := false
+		for _, row := range sheet.Rows {
+			for _, cell := range row {
+				if cell.Value == toFind {
+					found = true
+					log.Println("Candle already stored")
+				}
+			}
 		}
-		*/
-	//today := time.Now()
-	//sheet.Update(0, 24, today.Format("01-02-2006 15:04:05"))
-	//sheet.Synchronize()
+
+		if found == false {
+			/* Write new candle */
+			sheet.Update(beginRow, 0, candle.Timestamp)
+			sheet.Update(beginRow, 1, candle.Time)
+			sheet.Update(beginRow, 2, candle.Open)
+			sheet.Update(beginRow, 3, candle.Close)
+			beginRow += 1
+		}
+	}
+	sheet.Synchronize()
+}

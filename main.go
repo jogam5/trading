@@ -30,10 +30,10 @@ func main() {
 
 	_, bitfinex := client.ConnectionBitfinex()
 	sh := client.ConnectionGoogle("1yLdidIUEIVJNVnSmMTKkALBj76cF8bI_HSGoR0QmFUg")
-	sheet, _ := sh.SheetByTitle("20DMA")
+	sheet, _ := sh.SheetByTitle("ETH-20DMA")
 
-	spreadsheet.GetPrice(bitfinex, "tETHUSD", sheet)
+	candles := spreadsheet.GetCandles(bitfinex, "tETHUSD", sheet)
 	//trades := spreadsheet.ReadCsv()
-	//spreadsheet.WriteCsv(trades, sheet)
+	spreadsheet.WriteCandles(candles, sheet)
 	//spreadsheet.MoveTrades(4, sheet, sheetSold)
 }
