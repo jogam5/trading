@@ -1,11 +1,51 @@
 package spreadsheet
 
 import (
-	"cryptofolio/models"
 	"gopkg.in/Iwark/spreadsheet.v2"
 	"log"
 	"strconv"
+	"strings"
+	"trading/models"
 )
+
+/*
+==
+Query the data base and return an slice of a struct Position. This
+slice contains the specific information that will be used to feed
+the algorithm.
+==
+*/
+
+func QueryDB(sheet *spreadsheet.Sheet, timestamp string) []models.Position {
+	/* Fetch candles */
+	log.Println("Query data base")
+	col := sheet.Columns[1]
+
+	index := 1
+	positions := []models.Position{}
+	for _, v := range col {
+		if strings.Contains(v.Value, timestamp) {
+			//log.Println(sheet.Rows[v.Row][0].Value)
+			p := models.Position{
+				Id:               index,
+				Timestamp:        sheet.Rows[v.Row][0].Value,
+				Open:             sheet.Rows[v.Row][2].Value,
+				MovingAverage:    sheet.Rows[v.Row][4].Value,
+				PriceAboveMA:     SToBool(sheet.Rows[v.Row][5].Value),
+				PriceCrossMA:     SToBool(sheet.Rows[v.Row][6].Value),
+				Rebalance:        SToBool(sheet.Rows[v.Row][7].Value),
+				PreviousPosition: sheet.Rows[v.Row][8].Value,
+				ETH:              sheet.Rows[v.Row][9].Value,
+				ETHValue:         sheet.Rows[v.Row][10].Value,
+				USD:              sheet.Rows[v.Row][11].Value,
+			}
+			positions = append(positions, p)
+			index = index + 1
+		}
+	}
+	log.Println(positions)
+	return positions
+}
 
 func FetchPairs(sheet *spreadsheet.Sheet, exchange string) []models.Pair {
 	/* Fetch pairs of coins */
@@ -71,3 +111,7 @@ func Int64ToS(num int64) string {
 	return strconv.FormatInt(num, 10)
 }
 
+func SToBool(s string) bool {
+	b, _ := strconv.ParseBool(s)
+	return b
+}

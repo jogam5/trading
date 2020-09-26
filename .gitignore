@@ -1,6 +1,12 @@
 # VIM #
 *.swp
 
-.DS_Store
+# Google API #
 go-cry-ade01b0b9a7c.json
+
+# Cron Job #
 main
+cron.txt
+
+# Others # 
+.DS_Store
