@@ -43,7 +43,7 @@ func QueryDB(sheet *spreadsheet.Sheet, timestamp string) []models.Position {
 			index = index + 1
 		}
 	}
-	log.Println(positions)
+	//log.Println(positions)
 	return positions
 }
 

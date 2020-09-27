@@ -4,6 +4,8 @@ import (
 	//"bufio"
 	"trading/models"
 	//"encoding/csv"
+	"github.com/bitfinexcom/bitfinex-api-go/pkg/models/order"
+	//"github.com/bitfinexcom/bitfinex-api-go/v2"
 	"github.com/bitfinexcom/bitfinex-api-go/v2/rest"
 	"gopkg.in/Iwark/spreadsheet.v2"
 	//"io"
@@ -93,4 +95,55 @@ func WriteCandles(candles []models.Candle, sheet *spreadsheet.Sheet) {
 		}
 	}
 	sheet.Synchronize()
+}
+
+/*
+==
+Place buy and sell orders in Bitfinex depending on the Moving
+Average 20 Day strategy
+==
+*/
+
+func MovingAverage(bitfinex *rest.Client, positions []models.Position) {
+	//1. Get data from spreadsheet
+	data := positions[len(positions)-1]
+	if !data.Rebalance {
+
+		log.Println("---> MOVING AVERAGE: Rebalance position")
+		// 2. Rebalance current position
+		if data.ETH > data.USD {
+			log.Println("---> Sell ETH, Buy USD")
+			response, err := bitfinex.Orders.SubmitOrder(&order.NewRequest{
+				Symbol: "tETHUSD",
+				CID:    time.Now().Unix() / 1000,
+				Amount: -0.01, // Change
+				Type:   "EXCHANGE LIMIT",
+				Price:  500, // Change
+			})
+			if err != nil {
+				panic(err)
+			}
+			log.Println(response)
+
+		} else {
+			log.Println("---> Buy ETH, Sell USD")
+
+			response, err := bitfinex.Orders.SubmitOrder(&order.NewRequest{
+				Symbol: "tETHUSD",
+				CID:    time.Now().Unix() / 1000,
+				Amount: 0.01, // Change
+				Type:   "EXCHANGE LIMIT",
+				Price:  100, // Change
+			})
+			if err != nil {
+				panic(err)
+			}
+			log.Println(response)
+
+		}
+		// 4. Notify
+	} else {
+		log.Println("---> MOVING AVERAGE: Hodl position")
+		// 5. Notify
+	}
 }

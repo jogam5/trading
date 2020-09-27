@@ -34,12 +34,13 @@ func checkError(err error) {
 }
 
 func updateCandles() {
-	//_, bitfinex := client.ConnectionBitfinex()
+	_, bitfinex := client.ConnectionBitfinex()
 	sh := client.ConnectionGoogle("1yLdidIUEIVJNVnSmMTKkALBj76cF8bI_HSGoR0QmFUg")
 	sheet, _ := sh.SheetByTitle("ETH-20DMA")
 	//candles := spreadsheet.GetCandles(bitfinex, "tETHUSD", sheet)
 	//spreadsheet.WriteCandles(candles, sheet)
-	spreadsheet.QueryDB(sheet, "22:00:00")
+	positions := spreadsheet.QueryDB(sheet, "22:00:00")
+	spreadsheet.MovingAverage(bitfinex, positions)
 }
 
 func main() {
