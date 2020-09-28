@@ -102,72 +102,68 @@ func WriteCandles(candles []models.Candle, sheet *spreadsheet.Sheet) {
 Place buy and sell orders in Bitfinex depending on the Moving
 Average 20 Day strategy
 To do:
-1. Get latest Bid Price (or Ask)
-2. Refactor code for submit order
-3. Send notification (SMS, Email, other) for V 3.0
+1. Send notification (SMS, Email, other) for V 3.0
 ==
 */
 
-func MovingAverage(bitfinex *rest.Client, bfxPub *rest.Client, positions []models.Position) {
+func MovingAverage(bfxPriv *rest.Client, bfxPub *rest.Client, positions []models.Position) {
 	//1. Get data from spreadsheet
 	data := positions[len(positions)-1]
 	r, _ := bfxPub.Tickers.Get("tETHUSD")
-	price := r.LastPrice
-	log.Println(price)
 
+	// 2. Rebalance current position
 	if !data.Rebalance { // ! for Development
 		log.Println("---> MOVING AVERAGE: Rebalance position")
-		// 2. Rebalance current position
 		if data.ETH > data.USD {
 			log.Println("---> Sell ETH, Buy USD")
-			response, err := bitfinex.Orders.SubmitOrder(&order.NewRequest{
-				Symbol: "tETHUSD",
-				CID:    time.Now().Unix() / 1000,
-				Amount: -SToF(data.ETH),//-0.02, // Change
-				Type:   "EXCHANGE LIMIT",
-				Price:  500, // Change
-			})
-			if err != nil {
-				panic(err)
-			} else {
-				log.Println(response)
-			}
-			orders := response.NotifyInfo.(*order.Snapshot)
-			//log.Println(response.NotifyInfo.(*order.Snapshot))
-			var orderID int64
-			for _, o := range orders.Snapshot {
-				orderID = o.ID
-			}
-			log.Println(orderID)
-
+			price := r.Ask + 0.3
+			log.Println(price)
+			amount := -1 * (SToF(data.ETH))
+			log.Println(amount)
+			SubmitOrder(bfxPriv, price, amount)
 		} else {
 			log.Println("---> Buy ETH, Sell USD")
-			response, err := bitfinex.Orders.SubmitOrder(&order.NewRequest{
-				Symbol: "tETHUSD",
-				CID:    time.Now().Unix() / 1000,
-				Amount: SToF(data.USD)/price,//0.02, // Change
-				Type:   "EXCHANGE LIMIT",
-				Price:  100, // Change
-			})
-			if err != nil {
-				panic(err)
-			} else {
-				log.Println(response)
-			}
-			orders := response.NotifyInfo.(*order.Snapshot)
-			//log.Println(response.NotifyInfo.(*order.Snapshot))
-			var orderID int64
-			for _, o := range orders.Snapshot {
-				orderID = o.ID
-			}
-			log.Println(orderID)
+			price := r.Bid - 0.3
+			log.Println(price)
+			amount := SToF(data.USD) / price
+			log.Println(amount)
+			SubmitOrder(bfxPriv, price, amount)
 		}
 		// 4. Notify V 3.0
 	} else {
 		log.Println("---> MOVING AVERAGE: Hodl position")
 		// 5. Notify V 3.0
 	}
-	
+}
+
+/*
+==
+Receives the price and the amount in order to submit an order in
+Bitfinex and returns the orderID, which can be used to check
+the status of the submitted order.
+==
+*/
+
+func SubmitOrder(bfxPriv *rest.Client, price float64, amount float64) int64 {
+	response, err := bfxPriv.Orders.SubmitOrder(&order.NewRequest{
+		Symbol: "tETHUSD",
+		CID:    time.Now().Unix() / 1000,
+		Amount: amount,
+		Type:   "EXCHANGE LIMIT",
+		Price:  price,
+	})
+	if err != nil {
+		panic(err)
+	} else {
+		log.Println(response)
+	}
+	orders := response.NotifyInfo.(*order.Snapshot)
+	var orderID int64
+	for _, o := range orders.Snapshot {
+		orderID = o.ID
+	}
+	log.Println(orderID)
+	return orderID
 }
 
 /*func orderStatus(bitfinex *rest.Client, orderID int) {
