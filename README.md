@@ -1,10 +1,16 @@
-/*
-This program contains an algorithm manager for
-a number of strategies to trade Bitcoin and Ether
+# ATG
 
-********
-20 DAY Moving Average
-********
+ATG is a Go algorithm for automated trading.
+
+The first version follows a 20 Day Moving Average (20DMA) strategy for Ethereum (ETH) on Bitfinex.
+
+When the price of ETH closes above the 20DMA, the algorithm buys ETH. When the price of ETH is below the 20DMA (i.e. a drop in the market is likely to occur) the algorithm sells ETH and buys USD. 
+
+Everyday at 11:00 UTC the rebalance takes place automatically.
+
+Current version: 1.2.
+
+## Roadmap 
 
 ### V 1.0 - 09/21/2020
 1. Choose where to fetch the prices (Source)
@@ -24,37 +30,8 @@ a number of strategies to trade Bitcoin and Ether
 
 ### V1.x
 11. Build a simple website to show how the strategy performs against Buy and Hold.
-12. Instead rebalancing to USD, use CUSD (the Compound's version of USD) so that an interest can be accrued on the amount of USD.
+12. Instead rebalancing to USD, use CUSD (the Compound's version of USD) so that an interest can be accrued on the amount of USD. 
 13. Instead of rebalancing to ETH, find a way to accrue some interest in Compound or AAVE.
 14. Testing the algorithm on other altcoins.
 15. Generalize the algorithm so that it can be used for other periods of the Moving Average (i.e. 1 Week Moving Average for long term strategies in Bitcoin)
 16. Use a Database instead of relying on Google Spreadsheet to store the data.
-
-*/
-package main
-
-import (
-	"trading/client"
-	"trading/spreadsheet"
-)
-
-func checkError(err error) {
-	if err != nil {
-		panic(err.Error())
-	}
-}
-
-func updateCandles() {
-	bfxPriv, bfxPub := client.ConnectionBitfinex()
-	sh := client.ConnectionGoogle("1yLdidIUEIVJNVnSmMTKkALBj76cF8bI_HSGoR0QmFUg")
-	sheet, _ := sh.SheetByTitle("ETH-20DMA")
-	//candles := spreadsheet.GetCandles(bfxPub, "tETHUSD", sheet)
-	//spreadsheet.WriteCandles(candles, sheet)
-	positions := spreadsheet.QueryDB(sheet, "22:00:00")
-	spreadsheet.MovingAverage(bfxPriv, bfxPub, positions)
-
-}
-
-func main() {
-	updateCandles()
-}
