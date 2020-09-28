@@ -101,14 +101,21 @@ func WriteCandles(candles []models.Candle, sheet *spreadsheet.Sheet) {
 ==
 Place buy and sell orders in Bitfinex depending on the Moving
 Average 20 Day strategy
+To do:
+1. Get latest Bid Price (or Ask)
+2. Refactor code for submit order
+3. Send notification (SMS, Email, other) for V 3.0
 ==
 */
 
-func MovingAverage(bitfinex *rest.Client, positions []models.Position) {
+func MovingAverage(bitfinex *rest.Client, bfxPub *rest.Client, positions []models.Position) {
 	//1. Get data from spreadsheet
 	data := positions[len(positions)-1]
-	if !data.Rebalance {
+	r, _ := bfxPub.Tickers.Get("tETHUSD")
+	price := r.LastPrice
+	log.Println(price)
 
+	if !data.Rebalance { // ! for Development
 		log.Println("---> MOVING AVERAGE: Rebalance position")
 		// 2. Rebalance current position
 		if data.ETH > data.USD {
@@ -116,34 +123,57 @@ func MovingAverage(bitfinex *rest.Client, positions []models.Position) {
 			response, err := bitfinex.Orders.SubmitOrder(&order.NewRequest{
 				Symbol: "tETHUSD",
 				CID:    time.Now().Unix() / 1000,
-				Amount: -0.01, // Change
+				Amount: -SToF(data.ETH),//-0.02, // Change
 				Type:   "EXCHANGE LIMIT",
 				Price:  500, // Change
 			})
 			if err != nil {
 				panic(err)
+			} else {
+				log.Println(response)
 			}
-			log.Println(response)
+			orders := response.NotifyInfo.(*order.Snapshot)
+			//log.Println(response.NotifyInfo.(*order.Snapshot))
+			var orderID int64
+			for _, o := range orders.Snapshot {
+				orderID = o.ID
+			}
+			log.Println(orderID)
 
 		} else {
 			log.Println("---> Buy ETH, Sell USD")
-
 			response, err := bitfinex.Orders.SubmitOrder(&order.NewRequest{
 				Symbol: "tETHUSD",
 				CID:    time.Now().Unix() / 1000,
-				Amount: 0.01, // Change
+				Amount: SToF(data.USD)/price,//0.02, // Change
 				Type:   "EXCHANGE LIMIT",
 				Price:  100, // Change
 			})
 			if err != nil {
 				panic(err)
+			} else {
+				log.Println(response)
 			}
-			log.Println(response)
-
+			orders := response.NotifyInfo.(*order.Snapshot)
+			//log.Println(response.NotifyInfo.(*order.Snapshot))
+			var orderID int64
+			for _, o := range orders.Snapshot {
+				orderID = o.ID
+			}
+			log.Println(orderID)
 		}
-		// 4. Notify
+		// 4. Notify V 3.0
 	} else {
 		log.Println("---> MOVING AVERAGE: Hodl position")
-		// 5. Notify
+		// 5. Notify V 3.0
 	}
+	
 }
+
+/*func orderStatus(bitfinex *rest.Client, orderID int) {
+	if orderID != "" {
+		bfxPriv.Orders.GetByOrderId(52003067598)
+	} else {
+		log.Println("Order does not exist")
+	}
+}*/

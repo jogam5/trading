@@ -18,6 +18,9 @@ V 2.0 09/25/2020
 6. Set up BUY/SELL via API
 
 V 3.0
+8. Write orderID in spreadsheet and monitors when it is placed on Bitfinex
+9. Send notification when rebalance has taken place
+10. Send notification if rebalance did not take place
 7. Code the algorithm to compute the rebalanaces
 */
 package main
@@ -34,13 +37,14 @@ func checkError(err error) {
 }
 
 func updateCandles() {
-	_, bitfinex := client.ConnectionBitfinex()
+	bfxPriv, bfxPub := client.ConnectionBitfinex()
 	sh := client.ConnectionGoogle("1yLdidIUEIVJNVnSmMTKkALBj76cF8bI_HSGoR0QmFUg")
 	sheet, _ := sh.SheetByTitle("ETH-20DMA")
-	//candles := spreadsheet.GetCandles(bitfinex, "tETHUSD", sheet)
+	//candles := spreadsheet.GetCandles(bfxPub, "tETHUSD", sheet)
 	//spreadsheet.WriteCandles(candles, sheet)
 	positions := spreadsheet.QueryDB(sheet, "22:00:00")
-	spreadsheet.MovingAverage(bitfinex, positions)
+	spreadsheet.MovingAverage(bfxPriv, bfxPub, positions)
+
 }
 
 func main() {

@@ -95,7 +95,7 @@ func ToI(s string) int {
 	return i
 }
 
-func ToF(s string) float64 {
+func SToF(s string) float64 {
 	/* Converts string to float */
 	i, _ := strconv.ParseFloat(s, 64)
 	return i
