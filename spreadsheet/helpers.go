@@ -21,13 +21,12 @@ func QueryDB(sheet *spreadsheet.Sheet, timestamp string) []models.Position {
 	log.Println("Query data base")
 	col := sheet.Columns[1]
 
-	index := 1
 	positions := []models.Position{}
 	for _, v := range col {
 		if strings.Contains(v.Value, timestamp) {
 			//log.Println(sheet.Rows[v.Row][0].Value)
 			p := models.Position{
-				Id:               index,
+				Id:               int(v.Row), /*casting uint into int*/
 				Timestamp:        sheet.Rows[v.Row][0].Value,
 				Open:             sheet.Rows[v.Row][2].Value,
 				MovingAverage:    sheet.Rows[v.Row][4].Value,
@@ -40,44 +39,19 @@ func QueryDB(sheet *spreadsheet.Sheet, timestamp string) []models.Position {
 				USD:              sheet.Rows[v.Row][11].Value,
 			}
 			positions = append(positions, p)
-			index = index + 1
 		}
 	}
 	//log.Println(positions)
 	return positions
 }
 
-func FetchPairs(sheet *spreadsheet.Sheet, exchange string) []models.Pair {
-	/* Fetch pairs of coins */
-	log.Println("Fetching data")
-	col := sheet.Columns[0]
-
-	/* Loop over pairs */
-	pairs := []models.Pair{}
-	for _, v := range col {
-		if v.Value == "Coin" {
-			continue
-		} else if v.Value == "Closed" {
-			break
-		} else if len(v.Value) > 0 {
-			base := sheet.Rows[v.Row][1]
-			exc := sheet.Rows[v.Row][2]
-			if exc.Value == exchange {
-				p := models.Pair{
-					Row:      int(v.Row),
-					Coin:     v.Value,
-					Base:     base.Value,
-					Exchange: exc.Value,
-				}
-				pairs = append(pairs, p)
-			}
-		}
-	}
-	return pairs
-}
+/*
+==
+Returns a last not null cell of a specific column
+==
+*/
 
 func ReturnLastCell(colNumber uint, sheet *spreadsheet.Sheet) spreadsheet.Cell {
-	/* Returns a last not null cell of a specific column */
 	var last spreadsheet.Cell
 	for _, cell := range sheet.Columns[colNumber] {
 		if cell.Value == "" {

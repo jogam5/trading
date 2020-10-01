@@ -106,8 +106,9 @@ To do:
 ==
 */
 
-func MovingAverage(bfxPriv *rest.Client, bfxPub *rest.Client, positions []models.Position) {
+func MovingAverage(sheet *spreadsheet.Sheet, bfxPriv *rest.Client, bfxPub *rest.Client, positions []models.Position) {
 	//1. Get data from spreadsheet
+	var orderID int64
 	data := positions[len(positions)-1]
 	r, _ := bfxPub.Tickers.Get("tETHUSD")
 
@@ -120,20 +121,22 @@ func MovingAverage(bfxPriv *rest.Client, bfxPub *rest.Client, positions []models
 			log.Println(price)
 			amount := -1 * (SToF(data.ETH))
 			log.Println(amount)
-			SubmitOrder(bfxPriv, price, amount)
+			orderID = SubmitOrder(bfxPriv, price, amount)
 		} else {
 			log.Println("---> Buy ETH, Sell USD")
 			price := r.Bid - 0.3
-			log.Println(price)
+			log.Println("---> Price:", price)
 			amount := SToF(data.USD) / price
-			log.Println(amount)
-			SubmitOrder(bfxPriv, price, amount)
+			log.Println("---> Amount:", amount)
+			orderID = SubmitOrder(bfxPriv, price, amount)
 		}
 		// 4. Notify V 3.0
 	} else {
 		log.Println("---> MOVING AVERAGE: Hodl position")
 		// 5. Notify V 3.0
 	}
+	sheet.Update(data.Id, 12, Int64ToS(orderID))
+	sheet.Synchronize()
 }
 
 /*
@@ -155,14 +158,14 @@ func SubmitOrder(bfxPriv *rest.Client, price float64, amount float64) int64 {
 	if err != nil {
 		panic(err)
 	} else {
-		log.Println(response)
+		//log.Println(response)
 	}
 	orders := response.NotifyInfo.(*order.Snapshot)
 	var orderID int64
 	for _, o := range orders.Snapshot {
 		orderID = o.ID
 	}
-	log.Println(orderID)
+	log.Println("---> OrderID:", orderID)
 	return orderID
 }
 

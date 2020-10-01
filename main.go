@@ -21,15 +21,19 @@ a number of strategies to trade Bitcoin and Ether
 ### V 1.2 - 09/29/2020
 9. Write orderID in the Spreadsheet and monitors its status on Bitfinex
 10. Send notification when the Rebalance has taken place (SMS, Email, etc)
+11. Reorganize code
+12. Create blank spreadsheet for the project
 
 ### V1.x
-11. Build a simple website to show how the strategy performs against Buy and Hold.
-12. Instead rebalancing to USD, use CUSD (the Compound's version of USD) so that an interest can be accrued on the amount of USD.
-13. Instead of rebalancing to ETH, find a way to accrue some interest in Compound or AAVE.
-14. Testing the algorithm on other altcoins.
-15. Generalize the algorithm so that it can be used for other periods of the Moving Average (i.e. 1 Week Moving Average for long term strategies in Bitcoin)
-16. Use a Database instead of relying on Google Spreadsheet to store the data.
+1x. Build a simple website to show how the strategy performs against Buy and Hold.
+1x. Instead rebalancing to USD, use CUSD (the Compound's version of USD) so that an interest can be accrued on the amount of USD.
+1x. Instead of rebalancing to ETH, find a way to accrue some interest in Compound or AAVE.
+1x. Testing the algorithm on other altcoins.
+1x. Generalize the algorithm so that it can be used for other periods of the Moving Average (i.e. 1 Week Moving Average for long term strategies in Bitcoin)
+1x. Use a Database instead of relying on Google Spreadsheet to store the data.
 
+README:
+https://www.makeareadme.com
 */
 package main
 
@@ -51,7 +55,7 @@ func updateCandles() {
 	//candles := spreadsheet.GetCandles(bfxPub, "tETHUSD", sheet)
 	//spreadsheet.WriteCandles(candles, sheet)
 	positions := spreadsheet.QueryDB(sheet, "22:00:00")
-	spreadsheet.MovingAverage(bfxPriv, bfxPub, positions)
+	spreadsheet.MovingAverage(sheet, bfxPriv, bfxPub, positions)
 
 }
 
