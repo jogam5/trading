@@ -169,9 +169,10 @@ func SubmitOrder(bfxPriv *rest.Client, price float64, amount float64) int64 {
 	return orderID
 }
 
-/*func MonitorOrderStatus(bfxPriv *rest.Client, sheet *spreadsheet.Sheet) {
-	cell := FindValue(sheet, Int64ToS(orderID))
-	res := bfxPriv.Orders.GetByOrderId(cell.Value)
+func MonitorOrderStatus(bfxPriv *rest.Client, sheet *spreadsheet.Sheet) {
+	positions := QueryDB(sheet, "22:00:00")
+	row := positions[len(positions)-1]
+	orderID := int64(SToI(row.OrderID))
+	res, _ := bfxPriv.Orders.GetByOrderId(orderID)
 	log.Println(res)
 }
-*/

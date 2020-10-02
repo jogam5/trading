@@ -38,6 +38,7 @@ https://www.makeareadme.com
 package main
 
 import (
+	"time"
 	"trading/client"
 	"trading/spreadsheet"
 )
@@ -56,7 +57,8 @@ func updateCandles() {
 	//spreadsheet.WriteCandles(candles, sheet)
 	positions := spreadsheet.QueryDB(sheet, "22:00:00")
 	spreadsheet.MovingAverage(sheet, bfxPriv, bfxPub, positions)
-
+	time.Sleep(10 * time.Second)
+	spreadsheet.MonitorOrderStatus(bfxPriv, sheet)
 }
 
 func main() {

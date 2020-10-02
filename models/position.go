@@ -12,4 +12,5 @@ type Position struct {
 	ETH              string
 	ETHValue         string
 	USD              string
+	OrderID          string
 }

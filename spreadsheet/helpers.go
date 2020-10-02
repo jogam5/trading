@@ -37,6 +37,7 @@ func QueryDB(sheet *spreadsheet.Sheet, timestamp string) []models.Position {
 				ETH:              sheet.Rows[v.Row][9].Value,
 				ETHValue:         sheet.Rows[v.Row][10].Value,
 				USD:              sheet.Rows[v.Row][11].Value,
+				OrderID:          sheet.Rows[v.Row][12].Value,
 			}
 			positions = append(positions, p)
 		}
@@ -81,7 +82,7 @@ func FindValue(sheet *spreadsheet.Sheet, value string) spreadsheet.Cell {
 	return cellFound
 }
 
-func ToI(s string) int {
+func SToI(s string) int {
 	/* Converts string to int */
 	i, _ := strconv.Atoi(s)
 	return i
