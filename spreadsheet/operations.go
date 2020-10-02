@@ -14,6 +14,7 @@ import (
 	//"os"
 	//"path/filepath"
 	"sort"
+	"strings"
 	"time"
 )
 
@@ -109,6 +110,7 @@ To do:
 func MovingAverage(sheet *spreadsheet.Sheet, bfxPriv *rest.Client, bfxPub *rest.Client, positions []models.Position) {
 	//1. Get data from spreadsheet
 	var orderID int64
+	var status string
 	data := positions[len(positions)-1]
 	r, _ := bfxPub.Tickers.Get("tETHUSD")
 
@@ -121,22 +123,27 @@ func MovingAverage(sheet *spreadsheet.Sheet, bfxPriv *rest.Client, bfxPub *rest.
 			log.Println(price)
 			amount := -1 * (SToF(data.ETH))
 			log.Println(amount)
-			orderID = SubmitOrder(bfxPriv, price, amount)
+			orderID, status = SubmitOrder(bfxPriv, price, amount)
 		} else {
 			log.Println("---> Buy ETH, Sell USD")
 			price := r.Bid - 0.3
 			log.Println("---> Price:", price)
 			amount := SToF(data.USD) / price
 			log.Println("---> Amount:", amount)
-			orderID = SubmitOrder(bfxPriv, price, amount)
+			orderID, status = SubmitOrder(bfxPriv, price, amount)
 		}
 		// 4. Notify V 3.0
 	} else {
 		log.Println("---> MOVING AVERAGE: Hodl position")
 		// 5. Notify V 3.0
 	}
-	sheet.Update(data.Id, 12, Int64ToS(orderID))
-	sheet.Synchronize()
+	if orderID != 0 {
+		sheet.Update(data.Id, 12, Int64ToS(orderID))
+		sheet.Update(data.Id, 13, status)
+		sheet.Synchronize()
+	} else {
+		log.Println("**** ERROR in MovingAverage() algorithm ****")
+	}
 }
 
 /*
@@ -147,7 +154,7 @@ the status of the submitted order.
 ==
 */
 
-func SubmitOrder(bfxPriv *rest.Client, price float64, amount float64) int64 {
+func SubmitOrder(bfxPriv *rest.Client, price float64, amount float64) (int64, string) {
 	response, err := bfxPriv.Orders.SubmitOrder(&order.NewRequest{
 		Symbol: "tETHUSD",
 		CID:    time.Now().Unix() / 1000,
@@ -157,22 +164,48 @@ func SubmitOrder(bfxPriv *rest.Client, price float64, amount float64) int64 {
 	})
 	if err != nil {
 		panic(err)
-	} else {
-		//log.Println(response)
 	}
 	orders := response.NotifyInfo.(*order.Snapshot)
 	var orderID int64
+	var status string
 	for _, o := range orders.Snapshot {
 		orderID = o.ID
+		status = o.Status
 	}
 	log.Println("---> OrderID:", orderID)
-	return orderID
+	return orderID, status
 }
 
+// Delete cell, automate in separate program
 func MonitorOrderStatus(bfxPriv *rest.Client, sheet *spreadsheet.Sheet) {
 	positions := QueryDB(sheet, "22:00:00")
 	row := positions[len(positions)-1]
-	orderID := int64(SToI(row.OrderID))
-	res, _ := bfxPriv.Orders.GetByOrderId(orderID)
-	log.Println(res)
+	statusRow := row.Status
+	ethUnits := SToF(row.ETH)
+	id := int64(SToI(row.OrderID))
+	order, err := bfxPriv.Orders.GetHistoryByOrderId(id)
+	if err != nil {
+		log.Println(err)
+	} else {
+		if strings.Contains(statusRow, "EXECUTED") {
+			// Do nothing, the notification was already sent
+		} else if statusRow == "ACTIVE" {
+			if strings.Contains(order.Status, "EXECUTED") {
+				// Sending notification and update value
+				sheet.Update(row.Id, 13, order.Status)
+				if ethUnits > 0 {
+					// Sell ETH, buy USD
+					sheet.Update(row.Id, 9, "0")
+					sheet.Update(row.Id, 11, FToS(order.AmountOrig*(1-0.001))) // Need testing
+				} else {
+					// Buy ETH, sell USD
+					sheet.Update(row.Id, 9, FToS(order.AmountOrig*(1-0.001)))
+					sheet.Update(row.Id, 11, "0")
+				}
+				sheet.Synchronize()
+			}
+		}
+		log.Println(order.AmountOrig)
+		log.Println("---> Status from API:", order.Status)
+	}
 }
