@@ -38,6 +38,7 @@ func QueryDB(sheet *spreadsheet.Sheet, timestamp string) []models.Position {
 				ETHValue:         sheet.Rows[v.Row][10].Value,
 				USD:              sheet.Rows[v.Row][11].Value,
 				OrderID:          sheet.Rows[v.Row][12].Value,
+				Status:           sheet.Rows[v.Row][13].Value,
 			}
 			positions = append(positions, p)
 		}

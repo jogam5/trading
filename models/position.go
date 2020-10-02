@@ -13,4 +13,5 @@ type Position struct {
 	ETHValue         string
 	USD              string
 	OrderID          string
+	Status           string
 }

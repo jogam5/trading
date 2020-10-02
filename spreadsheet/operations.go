@@ -41,17 +41,15 @@ func timestampToTime(msTime int64) string {
 
 /*
 ==
-Fetch current price from Bitfinex and update table
+Fetch current price candles from Bitfinex and update table
 ==
 */
 func GetCandles(bitfinex *rest.Client, coin string, sheet *spreadsheet.Sheet) []models.Candle {
 	candlesHist, _ := bitfinex.Candles.History("tETHUSD", "1h")
-	//log.Println(candles.Snapshot[0])
 	//log.Println(timestampToTime(candles.Snapshot[0].MTS))
 	id := 1
 	candles := []models.Candle{}
 	for _, v := range candlesHist.Snapshot {
-		//log.Println(v)
 		var c models.Candle
 		c = models.Candle{
 			Id:        id,
@@ -81,13 +79,14 @@ func WriteCandles(candles []models.Candle, sheet *spreadsheet.Sheet) {
 			for _, cell := range row {
 				if cell.Value == toFind {
 					found = true
-					log.Println("Candle already stored")
+					//log.Println("Candle already stored")
 				}
 			}
 		}
 
 		if found == false {
 			/* Write new candle */
+			log.Println("--> New candle:", candle)
 			sheet.Update(beginRow, 0, candle.Timestamp)
 			sheet.Update(beginRow, 1, candle.Time)
 			sheet.Update(beginRow, 2, candle.Open)
@@ -115,7 +114,7 @@ func MovingAverage(sheet *spreadsheet.Sheet, bfxPriv *rest.Client, bfxPub *rest.
 	r, _ := bfxPub.Tickers.Get("tETHUSD")
 
 	// 2. Rebalance current position
-	if !data.Rebalance { // ! for Development
+	if data.Rebalance { // ! for Development
 		log.Println("---> MOVING AVERAGE: Rebalance position")
 		if data.ETH > data.USD {
 			log.Println("---> Sell ETH, Buy USD")
@@ -134,7 +133,7 @@ func MovingAverage(sheet *spreadsheet.Sheet, bfxPriv *rest.Client, bfxPub *rest.
 		}
 		// 4. Notify V 3.0
 	} else {
-		log.Println("---> MOVING AVERAGE: Hodl position")
+		log.Println("---> MOVING AVERAGE: No rebalance, Hodl position")
 		// 5. Notify V 3.0
 	}
 	if orderID != 0 {
@@ -142,7 +141,7 @@ func MovingAverage(sheet *spreadsheet.Sheet, bfxPriv *rest.Client, bfxPub *rest.
 		sheet.Update(data.Id, 13, status)
 		sheet.Synchronize()
 	} else {
-		log.Println("**** ERROR in MovingAverage() algorithm ****")
+		log.Println("---> No orderID received")
 	}
 }
 
@@ -176,36 +175,45 @@ func SubmitOrder(bfxPriv *rest.Client, price float64, amount float64) (int64, st
 	return orderID, status
 }
 
-// Delete cell, automate in separate program
+/*
+==
+Checks the status of the order an updates the spreadsheet if an order
+gets EXECUTED
+==
+*/
+
 func MonitorOrderStatus(bfxPriv *rest.Client, sheet *spreadsheet.Sheet) {
 	positions := QueryDB(sheet, "22:00:00")
 	row := positions[len(positions)-1]
+
+	/* Parameters */
 	statusRow := row.Status
 	ethUnits := SToF(row.ETH)
 	id := int64(SToI(row.OrderID))
+
 	order, err := bfxPriv.Orders.GetHistoryByOrderId(id)
 	if err != nil {
 		log.Println(err)
 	} else {
 		if strings.Contains(statusRow, "EXECUTED") {
-			// Do nothing, the notification was already sent
+			/* Do nothing, the notification was already sent */
+			log.Println("---> This order was EXECUTED and previously recorded")
 		} else if statusRow == "ACTIVE" {
 			if strings.Contains(order.Status, "EXECUTED") {
-				// Sending notification and update value
+				log.Println("---> Order EXECUTED: updating spreadsheet")
 				sheet.Update(row.Id, 13, order.Status)
 				if ethUnits > 0 {
-					// Sell ETH, buy USD
+					/* Sell ETH, buy USD */
 					sheet.Update(row.Id, 9, "0")
 					sheet.Update(row.Id, 11, FToS(order.AmountOrig*(1-0.001))) // Need testing
 				} else {
-					// Buy ETH, sell USD
+					/* Buy ETH, sell USD */
 					sheet.Update(row.Id, 9, FToS(order.AmountOrig*(1-0.001)))
 					sheet.Update(row.Id, 11, "0")
 				}
 				sheet.Synchronize()
 			}
 		}
-		log.Println(order.AmountOrig)
 		log.Println("---> Status from API:", order.Status)
 	}
 }

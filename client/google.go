@@ -18,7 +18,7 @@ func ConnectionGoogle(spreadsheetName string) spreadsheet.Spreadsheet {
 	service := spreadsheet.NewServiceWithClient(client)
 	spreadsheet, err := service.FetchSpreadsheet(spreadsheetName)
 	checkError(err)
-	log.Println("Google connected")
+	log.Println("####### Google ON")
 	return spreadsheet
 }
 

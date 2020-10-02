@@ -2,9 +2,9 @@
 This program contains an algorithm manager for
 a number of strategies to trade Bitcoin and Ether
 
-********
+**********************
 20 DAY Moving Average
-********
+*********************
 
 ### V 1.0 - 09/21/2020
 1. Choose where to fetch the prices (Source)
@@ -20,9 +20,13 @@ a number of strategies to trade Bitcoin and Ether
 
 ### V 1.2 - 09/29/2020
 9. Write orderID in the Spreadsheet and monitors its status on Bitfinex
+11. Update holdings
+11. Reorganize code in CMD
+10. Monitor via cronjob in an hourly basis if an order has been fulfilled
+HERE:
 10. Send notification when the Rebalance has taken place (SMS, Email, etc)
-11. Reorganize code
 12. Create blank spreadsheet for the project
+13. Create a new Btfinex account for the project
 
 ### V1.x
 1x. Build a simple website to show how the strategy performs against Buy and Hold.
@@ -35,32 +39,18 @@ a number of strategies to trade Bitcoin and Ether
 README:
 https://www.makeareadme.com
 */
+
 package main
 
 import (
-	"time"
 	"trading/client"
 	"trading/spreadsheet"
 )
 
-func checkError(err error) {
-	if err != nil {
-		panic(err.Error())
-	}
-}
-
-func updateCandles() {
+func main() {
 	bfxPriv, bfxPub := client.ConnectionBitfinex()
 	sh := client.ConnectionGoogle("1yLdidIUEIVJNVnSmMTKkALBj76cF8bI_HSGoR0QmFUg")
 	sheet, _ := sh.SheetByTitle("ETH-20DMA")
-	//candles := spreadsheet.GetCandles(bfxPub, "tETHUSD", sheet)
-	//spreadsheet.WriteCandles(candles, sheet)
 	positions := spreadsheet.QueryDB(sheet, "22:00:00")
 	spreadsheet.MovingAverage(sheet, bfxPriv, bfxPub, positions)
-	time.Sleep(10 * time.Second)
-	spreadsheet.MonitorOrderStatus(bfxPriv, sheet)
-}
-
-func main() {
-	updateCandles()
 }
