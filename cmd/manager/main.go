@@ -20,17 +20,19 @@ a number of strategies to trade Bitcoin and Ether
 
 ### V 1.2 - 09/29/2020
 9. Write orderID in the Spreadsheet and monitors its status on Bitfinex
-11. Update holdings
+10. Update holdings
 11. Reorganize code in CMD
-10. Monitor via cronjob in an hourly basis if an order has been fulfilled
+12. Monitor via cronjob in an hourly basis if an order has been fulfilled
 HERE:
-10. Send notification when the Rebalance has taken place (SMS, Email, etc)
-12. Create blank spreadsheet for the project
-13. Create a new Btfinex account for the project
+13. Create blank spreadsheet for the project
+14. Create a new Btfinex account for the project
+17. Reorganize spreadsheet to reflect current value of holdings
+16. Test automation of MA algorithm
+15. Send notification when the Rebalance has taken place (SMS, Email, etc)
 
 ### V1.x
 1x. Build a simple website to show how the strategy performs against Buy and Hold.
-1x. Instead rebalancing to USD, use CUSD (the Compound's version of USD) so that an interest can be accrued on the amount of USD.
+1x. Instead of rebalancing to USD, use CUSD (the Compound's version of USD) so that an interest can be accrued on the amount of USD.
 1x. Instead of rebalancing to ETH, find a way to accrue some interest in Compound or AAVE.
 1x. Testing the algorithm on other altcoins.
 1x. Generalize the algorithm so that it can be used for other periods of the Moving Average (i.e. 1 Week Moving Average for long term strategies in Bitcoin)

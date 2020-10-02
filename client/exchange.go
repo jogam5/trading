@@ -5,11 +5,11 @@ import (
 	"os"
 )
 
-func ConnectionBitfinex() (client, bitfinex *rest.Client) {
+func ConnectionBitfinex() (bfxPriv, bfxPub *rest.Client) {
 	key := os.Getenv("BFX_KEY")
 	secret := os.Getenv("BFX_SECRET")
 	uri := "https://api.bitfinex.com/v2/"
-	client = rest.NewClientWithURL(uri).Credentials(key, secret)
-	bitfinex = rest.NewClient()
-	return client, bitfinex
+	bfxPriv = rest.NewClientWithURL(uri).Credentials(key, secret)
+	bfxPub = rest.NewClient()
+	return bfxPriv, bfxPub
 }
