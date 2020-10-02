@@ -169,10 +169,9 @@ func SubmitOrder(bfxPriv *rest.Client, price float64, amount float64) int64 {
 	return orderID
 }
 
-/*func orderStatus(bitfinex *rest.Client, orderID int) {
-	if orderID != "" {
-		bfxPriv.Orders.GetByOrderId(52003067598)
-	} else {
-		log.Println("Order does not exist")
-	}
-}*/
+/*func MonitorOrderStatus(bfxPriv *rest.Client, sheet *spreadsheet.Sheet) {
+	cell := FindValue(sheet, Int64ToS(orderID))
+	res := bfxPriv.Orders.GetByOrderId(cell.Value)
+	log.Println(res)
+}
+*/

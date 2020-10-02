@@ -63,6 +63,24 @@ func ReturnLastCell(colNumber uint, sheet *spreadsheet.Sheet) spreadsheet.Cell {
 	return last
 }
 
+/*
+==
+Find a specific value in the spreadsheet and return a cell
+==
+*/
+
+func FindValue(sheet *spreadsheet.Sheet, value string) spreadsheet.Cell {
+	var cellFound spreadsheet.Cell
+	for _, row := range sheet.Rows {
+		for _, cell := range row {
+			if cell.Value == value {
+				cellFound = cell
+			}
+		}
+	}
+	return cellFound
+}
+
 func ToI(s string) int {
 	/* Converts string to int */
 	i, _ := strconv.Atoi(s)
