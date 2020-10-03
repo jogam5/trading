@@ -119,9 +119,9 @@ func MovingAverage(sheet *spreadsheet.Sheet, bfxPriv *rest.Client, bfxPub *rest.
 		if data.ETH > data.USD {
 			log.Println("---> Sell ETH, Buy USD")
 			price := r.Ask + 0.3
-			log.Println(price)
+			log.Println("---> Price:", price)
 			amount := -1 * (SToF(data.ETH))
-			log.Println(amount)
+			log.Println("---> Amount:", amount)
 			orderID, status = SubmitOrder(bfxPriv, price, amount)
 		} else {
 			log.Println("---> Buy ETH, Sell USD")
@@ -193,7 +193,7 @@ func MonitorOrderStatus(bfxPriv *rest.Client, sheet *spreadsheet.Sheet) {
 
 	order, err := bfxPriv.Orders.GetHistoryByOrderId(id)
 	if err != nil {
-		log.Println(err)
+		log.Println("--> orderID:", err)
 	} else {
 		if strings.Contains(statusRow, "EXECUTED") {
 			/* Do nothing, the notification was already sent */
@@ -205,7 +205,7 @@ func MonitorOrderStatus(bfxPriv *rest.Client, sheet *spreadsheet.Sheet) {
 				if ethUnits > 0 {
 					/* Sell ETH, buy USD */
 					sheet.Update(row.Id, 9, "0")
-					sheet.Update(row.Id, 11, FToS(order.AmountOrig*(1-0.001))) // Need testing
+					sheet.Update(row.Id, 11, FToS(-1*order.Price*order.AmountOrig*(1-0.001))) // Need testing
 				} else {
 					/* Buy ETH, sell USD */
 					sheet.Update(row.Id, 9, FToS(order.AmountOrig*(1-0.001)))
