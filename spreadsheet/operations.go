@@ -101,20 +101,23 @@ func WriteCandles(candles []models.Candle, sheet *spreadsheet.Sheet) {
 ==
 Place buy and sell orders in Bitfinex depending on the Moving
 Average 20 Day strategy
-To do:
-1. Send notification (SMS, Email, other) for V 3.0
 ==
 */
 
-func MovingAverage(sheet *spreadsheet.Sheet, bfxPriv *rest.Client, bfxPub *rest.Client, positions []models.Position) {
-	//1. Get data from spreadsheet
+func MovingAverage(sheet *spreadsheet.Sheet, bfxPriv *rest.Client, bfxPub *rest.Client, positions []models.Position) int {
+	/* 1. Get data from spreadsheet */
 	var orderID int64
 	var status string
 	data := positions[len(positions)-1]
 	r, _ := bfxPub.Tickers.Get("tETHUSD")
 
-	// 2. Rebalance current position
-	if data.Rebalance { // ! for Development
+	if strings.Contains(data.Status, "EXECUTED") || strings.Contains(data.Status, "ACTIVE") {
+		log.Println("--> Error: MA strategy was already applied on the last data.")
+		return 1
+	}
+
+	/* 2. Rebalance current position */
+	if data.Rebalance {
 		log.Println("---> MOVING AVERAGE: Rebalance position")
 		if data.ETH > data.USD {
 			log.Println("---> Sell ETH, Buy USD")
@@ -131,11 +134,10 @@ func MovingAverage(sheet *spreadsheet.Sheet, bfxPriv *rest.Client, bfxPub *rest.
 			log.Println("---> Amount:", amount)
 			orderID, status = SubmitOrder(bfxPriv, price, amount)
 		}
-		// 4. Notify V 3.0
 	} else {
 		log.Println("---> MOVING AVERAGE: No rebalance, Hodl position")
-		// 5. Notify V 3.0
 	}
+	/* 3. Update order status */
 	if orderID != 0 {
 		sheet.Update(data.Id, 12, Int64ToS(orderID))
 		sheet.Update(data.Id, 13, status)
@@ -143,6 +145,7 @@ func MovingAverage(sheet *spreadsheet.Sheet, bfxPriv *rest.Client, bfxPub *rest.
 	} else {
 		log.Println("---> No orderID received")
 	}
+	return 0
 }
 
 /*
