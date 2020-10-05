@@ -20,17 +20,6 @@ import (
 
 /*
 ==
-Check error generic function
-==
-*/
-func checkError(err error) {
-	if err != nil {
-		panic(err.Error())
-	}
-}
-
-/*
-==
 Convert Unix milliseconds to time.Time
 ==
 */
@@ -53,10 +42,10 @@ func GetCandles(bitfinex *rest.Client, coin string, sheet *spreadsheet.Sheet) []
 		var c models.Candle
 		c = models.Candle{
 			Id:        id,
-			Timestamp: Int64ToS(v.MTS),
+			Timestamp: Int64ToString(v.MTS),
 			Time:      timestampToTime(v.MTS),
-			Open:      FToS(v.Open),
-			Close:     FToS(v.Close),
+			Open:      Float64ToString(v.Open),
+			Close:     Float64ToString(v.Close),
 		}
 		candles = append(candles, c)
 		id = id + 1
@@ -103,7 +92,6 @@ Place buy and sell orders in Bitfinex depending on the Moving
 Average 20 Day strategy
 ==
 */
-
 func MovingAverage(sheet *spreadsheet.Sheet, bfxPriv *rest.Client, bfxPub *rest.Client, positions []models.Position) int {
 	/* 1. Get data from spreadsheet */
 	var orderID int64
@@ -135,11 +123,11 @@ func MovingAverage(sheet *spreadsheet.Sheet, bfxPriv *rest.Client, bfxPub *rest.
 			orderID, status = SubmitOrder(bfxPriv, price, amount)
 		}
 	} else {
-		log.Println("---> MOVING AVERAGE: No rebalance, Hodl position")
+		log.Println("---> MOVING AVERAGE: No rebalance, HODL position")
 	}
 	/* 3. Update order status */
 	if orderID != 0 {
-		sheet.Update(data.Id, 12, Int64ToS(orderID))
+		sheet.Update(data.Id, 12, Int64ToString(orderID))
 		sheet.Update(data.Id, 13, status)
 		sheet.Synchronize()
 	} else {
@@ -192,7 +180,7 @@ func MonitorOrderStatus(bfxPriv *rest.Client, sheet *spreadsheet.Sheet) {
 	/* Parameters */
 	statusRow := row.Status
 	ethUnits := SToF(row.ETH)
-	id := int64(SToI(row.OrderID))
+	id := int64(StringToInt(row.OrderID))
 
 	order, err := bfxPriv.Orders.GetHistoryByOrderId(id)
 	if err != nil {
@@ -208,10 +196,10 @@ func MonitorOrderStatus(bfxPriv *rest.Client, sheet *spreadsheet.Sheet) {
 				if ethUnits > 0 {
 					/* Sell ETH, buy USD */
 					sheet.Update(row.Id, 9, "0")
-					sheet.Update(row.Id, 11, FToS(-1*order.Price*order.AmountOrig*(1-0.001))) // Need testing
+					sheet.Update(row.Id, 11, Float64ToString(-1*order.Price*order.AmountOrig*(1-0.001))) // Need testing
 				} else {
 					/* Buy ETH, sell USD */
-					sheet.Update(row.Id, 9, FToS(order.AmountOrig*(1-0.001)))
+					sheet.Update(row.Id, 9, Float64ToString(order.AmountOrig*(1-0.001)))
 					sheet.Update(row.Id, 11, "0")
 				}
 				sheet.Synchronize()

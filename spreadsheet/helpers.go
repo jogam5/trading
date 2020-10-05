@@ -10,12 +10,22 @@ import (
 
 /*
 ==
+Check error generic function
+==
+*/
+func checkError(err error) {
+	if err != nil {
+		panic(err.Error())
+	}
+}
+
+/*
+==
 Query the data base and return an slice of a struct Position. This
 slice contains the specific information that will be used to feed
 the algorithm.
 ==
 */
-
 func QueryDB(sheet *spreadsheet.Sheet, timestamp string) []models.Position {
 	/* Fetch candles */
 	log.Println("Query data base")
@@ -30,9 +40,9 @@ func QueryDB(sheet *spreadsheet.Sheet, timestamp string) []models.Position {
 				Timestamp:        sheet.Rows[v.Row][0].Value,
 				Open:             sheet.Rows[v.Row][2].Value,
 				MovingAverage:    sheet.Rows[v.Row][4].Value,
-				PriceAboveMA:     SToBool(sheet.Rows[v.Row][5].Value),
-				PriceCrossMA:     SToBool(sheet.Rows[v.Row][6].Value),
-				Rebalance:        SToBool(sheet.Rows[v.Row][7].Value),
+				PriceAboveMA:     StringToBool(sheet.Rows[v.Row][5].Value),
+				PriceCrossMA:     StringToBool(sheet.Rows[v.Row][6].Value),
+				Rebalance:        StringToBool(sheet.Rows[v.Row][7].Value),
 				PreviousPosition: sheet.Rows[v.Row][8].Value,
 				ETH:              sheet.Rows[v.Row][9].Value,
 				ETHValue:         sheet.Rows[v.Row][10].Value,
@@ -52,7 +62,6 @@ func QueryDB(sheet *spreadsheet.Sheet, timestamp string) []models.Position {
 Returns a last not null cell of a specific column
 ==
 */
-
 func ReturnLastCell(colNumber uint, sheet *spreadsheet.Sheet) spreadsheet.Cell {
 	var last spreadsheet.Cell
 	for _, cell := range sheet.Columns[colNumber] {
@@ -83,29 +92,54 @@ func FindValue(sheet *spreadsheet.Sheet, value string) spreadsheet.Cell {
 	return cellFound
 }
 
-func SToI(s string) int {
+/*
+==
+Convert String to Int
+==
+*/
+func StringToInt(s string) int {
 	/* Converts string to int */
 	i, _ := strconv.Atoi(s)
 	return i
 }
 
+/*
+==
+Convert String to Float64
+==
+*/
 func SToF(s string) float64 {
 	/* Converts string to float */
 	i, _ := strconv.ParseFloat(s, 64)
 	return i
 }
 
-func FToS(num float64) string {
+/*
+==
+Convert Float64 to String
+==
+*/
+func Float64ToString(num float64) string {
 	/* Convert float64 to string */
 	return strconv.FormatFloat(num, 'f', -1, 64)
 }
 
-func Int64ToS(num int64) string {
+/*
+==
+Convert Int64 to String
+==
+*/
+func Int64ToString(num int64) string {
 	/* Convert int64 to string */
 	return strconv.FormatInt(num, 10)
 }
 
-func SToBool(s string) bool {
+/*
+==
+Convert String to Bool
+==
+*/
+func StringToBool(s string) bool {
 	b, _ := strconv.ParseBool(s)
 	return b
 }
