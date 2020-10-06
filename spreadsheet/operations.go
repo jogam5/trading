@@ -146,11 +146,12 @@ the status of the submitted order.
 
 func SubmitOrder(bfxPriv *rest.Client, price float64, amount float64) (int64, string) {
 	response, err := bfxPriv.Orders.SubmitOrder(&order.NewRequest{
-		Symbol: "tETHUSD",
-		CID:    time.Now().Unix() / 1000,
-		Amount: amount,
-		Type:   "EXCHANGE LIMIT",
-		Price:  price,
+		Symbol:        "tETHUSD",
+		CID:           time.Now().Unix() / 1000,
+		Amount:        amount,
+		Type:          "EXCHANGE LIMIT",
+		Price:         price,
+		AffiliateCode: "0xib78UF5",
 	})
 	if err != nil {
 		panic(err)
