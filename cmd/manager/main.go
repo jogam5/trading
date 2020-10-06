@@ -23,7 +23,6 @@ a number of strategies to trade Bitcoin and Ether
 10. Update holdings
 11. Reorganize code in CMD
 12. Monitor via cronjob in an hourly basis if an order has been fulfilled
-HERE:
 13. Create blank spreadsheet for the project
 14. Create a new Btfinex account for the project
 17. Reorganize spreadsheet to reflect current value of holdings
@@ -51,7 +50,7 @@ import (
 
 func main() {
 	bfxPriv, bfxPub := client.ConnectionBitfinex()
-	sh := client.ConnectionGoogle("1yLdidIUEIVJNVnSmMTKkALBj76cF8bI_HSGoR0QmFUg")
+	sh := client.ConnectionGoogle("1MK6SUfDrVHQXWL7pUZzS3yxkWuIDecAvHqxXpSKHWL8")
 	sheet, _ := sh.SheetByTitle("ETH-20DMA")
 	positions := spreadsheet.QueryDB(sheet, "22:00:00")
 	spreadsheet.MovingAverage(sheet, bfxPriv, bfxPub, positions)
