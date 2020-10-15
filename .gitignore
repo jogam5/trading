@@ -8,6 +8,7 @@ go-cry-ade01b0b9a7c.json
 main
 cronStatus.txt
 cronCandles.txt
+cronManager.txt
 
 # Others # 
 .DS_Store

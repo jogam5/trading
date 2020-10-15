@@ -27,8 +27,11 @@ a number of strategies to trade Bitcoin and Ether
 14. Reorganize spreadsheet to reflect current value of holdings
 
 ### V 1.3 - 10/07/2020
-15. Create a new Btfinex account for the project
 16. Test automation of MA algorithm
+x. Reanalize whole spreadsheet for MA from Sets
+x. Check waiting period for rebalancing or reduce confirmation period
+x. How to create new tabs for different amounts
+15. Create a new Btfinex account for the project
 17. Send notification when the Rebalance has taken place (SMS, Email, etc)
 
 ### V1.x
