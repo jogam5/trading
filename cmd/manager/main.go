@@ -28,11 +28,15 @@ a number of strategies to trade Bitcoin and Ether
 
 ### V 1.3 - 10/07/2020
 16. Test automation of MA algorithm
+x. Update transaction at 10pm must be done before new candle (11pm), otherwise the rebalance
+is not reflected on the spreadsheet when the new candle (11pm) is written
+x. The computations of the new line must be done programatically because doing it manually (in
+advance) interferes when rebalancing (i.e. ETH units are copied and also USD units are copied)
 x. Reanalize whole spreadsheet for MA from Sets
 x. Check waiting period for rebalancing or reduce confirmation period
 x. How to create new tabs for different amounts
-15. Create a new Btfinex account for the project
-17. Send notification when the Rebalance has taken place (SMS, Email, etc)
+x. Create a new Btfinex account for the project
+x. Send notification when the Rebalance has taken place (SMS, Email, etc)
 
 ### V1.x
 1x. Build a simple website to show how the strategy performs against Buy and Hold.
