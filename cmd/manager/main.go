@@ -28,6 +28,7 @@ a number of strategies to trade Bitcoin and Ether
 
 ### V 1.3 - 10/07/2020
 16. Test automation of MA algorithm
+17. Test algorithm with Link
 x. Update transaction at 10pm must be done before new candle (11pm), otherwise the rebalance
 is not reflected on the spreadsheet when the new candle (11pm) is written
 x. The computations of the new line must be done programatically because doing it manually (in
