@@ -5,4 +5,5 @@ type Asset struct {
 	Pair      string
 	Candles   []Candle
 	Positions []Position
+	DateTime  string
 }
