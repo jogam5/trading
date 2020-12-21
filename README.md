@@ -2,7 +2,7 @@
 
 ATG is a Go algorithm for automated trading.
 
-More information about the algorithm and how it performs will be shared here: [https://jgislas.com/mscs](jgislas.com/mscs).
+More information about the algorithm and how it performs will be shared here: [jgislas.com/mscs](https://jgislas.com/mscs).
 
 The first version follows a 20 Day Moving Average (20DMA) strategy for Ethereum (ETH) on Bitfinex.
 
