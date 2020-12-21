@@ -2,6 +2,8 @@
 
 ATG is a Go algorithm for automated trading.
 
+More information about the algorithm and how it performs will be shared here: https;//jgislas.com/mscs.
+
 The first version follows a 20 Day Moving Average (20DMA) strategy for Ethereum (ETH) on Bitfinex.
 
 When the price of ETH closes above the 20DMA, the algorithm buys ETH. When the price of ETH closes below the 20DMA (i.e. a drop in the market is likely to occur) the algorithm sells ETH and buys USD. 
