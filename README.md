@@ -34,12 +34,15 @@ Current version: 1.3.
 13. Create blank spreadsheet for the project
 14. Reorganize spreadsheet to reflect current value of holdings
 
-### V 1.3 - 10/07/2020
-16. Test automation of MA algorithm
-15. Create a new Btfinex account for the project
-17. Send notification when the Rebalance has taken place (SMS, Email, etc)
+### V 1.3 - 12/30/2020
+16. Prepare algorithm to add 10ETH:
+	a. Automate computations instead of drag information
+	b. Create new tab as if a new customer were to enter: think of the minimum required
+	c. What if time runs out, what should I do to add 10 ETH
 
 ### Other features
+15. Create a new Bitfinex account for the project
+17. Send notification when the Rebalance has taken place (SMS, Email, etc)
 18. Build a simple website to show how the strategy performs against Buy and Hold.
 19. Instead of rebalancing to USD, use CUSD (the Compound's version of USD) so that an interest can be accrued on the amount of USD.
 20. Instead of rebalancing to ETH, find a way to accrue some interest in Compound or AAVE.
