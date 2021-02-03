@@ -209,3 +209,14 @@ func MonitorOrderStatus(bfxPriv *rest.Client, sheet *spreadsheet.Sheet) {
 		log.Println("---> Status from API:", order.Status)
 	}
 }
+
+/*
+==
+Compute moving average. A "moving average" is the average of the last N values. A 20 day moving average is the average of the last 20 closing prices within a specific interval (i.e. hourly, daily)
+==
+*/
+func ComputeMovingAverage(period int, positions []models.Position) {
+	//1. Get all rows (in positions form) from spreadsheet
+	//2. Identify those that are not filled
+	//3. Compute MA
+}

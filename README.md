@@ -2,13 +2,7 @@
 
 ATG is a Go algorithm for automated trading.
 
-More information about the algorithm and how it performs will be shared here: [jgislas.com/mscs](https://jgislas.com/mscs).
-
-The first version follows a 20 Day Moving Average (20DMA) strategy for Ethereum (ETH) on Bitfinex.
-
-When the price of ETH closes above the 20DMA, the algorithm buys ETH. When the price of ETH closes below the 20DMA (i.e. a drop in the market is likely to occur) the algorithm sells ETH and buys USD. 
-
-Everyday at 03:00 UTC the algorithm runs and the rebalance takes place automatically.
+Performance of the algorithm can be seen here: [jgislas.com/mscs](https://jgislas.com/mscs).
 
 Current version: 1.3.
 
@@ -35,10 +29,10 @@ Current version: 1.3.
 14. Reorganize spreadsheet to reflect current value of holdings
 
 ### V 1.3 - 12/30/2020
-16. Prepare algorithm to add 10ETH:
-	a. Automate computations instead of drag information
-	b. Create new tab as if a new customer were to enter: think of the minimum required
-	c. What if time runs out, what should I do to add 10 ETH
+16. Automate computations of the algorithm
+	16.1 Compute moving average function
+	16.2 Rebalance function
+	16.3 Value function
 
 ### Other features
 15. Create a new Bitfinex account for the project

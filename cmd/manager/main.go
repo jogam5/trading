@@ -64,4 +64,5 @@ func main() {
 	sheet, _ := sh.SheetByTitle("ETH-20DMA")
 	positions := spreadsheet.QueryDB(sheet, "22:00:00")
 	spreadsheet.MovingAverage(sheet, bfxPriv, bfxPub, positions)
+	//spreadsheet.FetchDB(sheet)
 }

@@ -59,6 +59,44 @@ func QueryDB(sheet *spreadsheet.Sheet, timestamp string) []models.Position {
 
 /*
 ==
+Query the data base and return an slice of a struct Position. This
+slice contains the specific information that will be used to feed
+the algorithm.
+==
+*/
+func FetchDB(sheet *spreadsheet.Sheet) []models.Position {
+	/* Fetch candles */
+	log.Println("Fetch DB")
+	col := sheet.Columns[1]
+
+	positions := []models.Position{}
+	for _, v := range col {
+		if strings.Contains(v.Value, "00:00") {
+			//log.Println(sheet.Rows[v.Row][0].Value)
+			p := models.Position{
+				Id:               int(v.Row), /*casting uint into int*/
+				Timestamp:        sheet.Rows[v.Row][0].Value,
+				Open:             sheet.Rows[v.Row][2].Value,
+				MovingAverage:    sheet.Rows[v.Row][4].Value,
+				PriceAboveMA:     StringToBool(sheet.Rows[v.Row][5].Value),
+				PriceCrossMA:     StringToBool(sheet.Rows[v.Row][6].Value),
+				Rebalance:        StringToBool(sheet.Rows[v.Row][7].Value),
+				PreviousPosition: sheet.Rows[v.Row][8].Value,
+				ETH:              sheet.Rows[v.Row][9].Value,
+				ETHValue:         sheet.Rows[v.Row][10].Value,
+				USD:              sheet.Rows[v.Row][11].Value,
+				OrderID:          sheet.Rows[v.Row][12].Value,
+				Status:           sheet.Rows[v.Row][13].Value,
+			}
+			positions = append(positions, p)
+		}
+	}
+	log.Println(positions)
+	return positions
+}
+
+/*
+==
 Returns a last not null cell of a specific column
 ==
 */
