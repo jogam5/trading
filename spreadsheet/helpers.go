@@ -71,7 +71,7 @@ func FetchDB(sheet *spreadsheet.Sheet) []models.Position {
 
 	positions := []models.Position{}
 	for _, v := range col {
-		if strings.Contains(v.Value, "00:00") {
+		if strings.Contains(v.Value, "-2021") {
 			//log.Println(sheet.Rows[v.Row][0].Value)
 			p := models.Position{
 				Id:               int(v.Row), /*casting uint into int*/
