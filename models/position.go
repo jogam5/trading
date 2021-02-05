@@ -15,3 +15,9 @@ type Position struct {
 	OrderID          string
 	Status           string
 }
+
+type PositionById []Position
+
+func (a PositionById) Len() int           { return len(a) }
+func (a PositionById) Less(i, j int) bool { return a[i].Id < a[j].Id }
+func (a PositionById) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }

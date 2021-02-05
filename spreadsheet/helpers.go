@@ -64,14 +64,14 @@ slice contains the specific information that will be used to feed
 the algorithm.
 ==
 */
-func FetchDB(sheet *spreadsheet.Sheet) []models.Position {
+func FetchDB(sheet *spreadsheet.Sheet, keyword string) []models.Position {
 	/* Fetch candles */
 	log.Println("Fetch DB")
 	col := sheet.Columns[1]
 
 	positions := []models.Position{}
 	for _, v := range col {
-		if strings.Contains(v.Value, "-2021") {
+		if strings.Contains(v.Value, keyword) {
 			//log.Println(sheet.Rows[v.Row][0].Value)
 			p := models.Position{
 				Id:               int(v.Row), /*casting uint into int*/
@@ -91,7 +91,7 @@ func FetchDB(sheet *spreadsheet.Sheet) []models.Position {
 			positions = append(positions, p)
 		}
 	}
-	log.Println(positions)
+	//log.Println(positions)
 	return positions
 }
 
