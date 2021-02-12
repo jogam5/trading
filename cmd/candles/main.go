@@ -25,4 +25,8 @@ func main() {
 	candlesLTC := spreadsheet.GetCandles(bfxPub, "tLTCUSD", sheetLTC)
 	spreadsheet.WriteCandles(candlesLTC, sheetLTC)
 
+	sheetLINK, _ := sh.SheetByTitle("LINK")
+	candlesLINK := spreadsheet.GetCandles(bfxPub, "tLINK:USD", sheetLINK)
+	spreadsheet.WriteCandles(candlesLINK, sheetLINK)
+
 }
