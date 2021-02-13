@@ -9,9 +9,9 @@ type Position struct {
 	PriceCrossMA     bool
 	Rebalance        bool
 	PreviousPosition string
-	ETH              string
-	ETHValue         string
-	USD              string
+	CoinUnits        string
+	USDValue         string
+	USDUnits         string
 	OrderID          string
 	Status           string
 }

@@ -34,7 +34,7 @@ Fetch current price candles from Bitfinex and update table
 ==
 */
 func GetCandles(bitfinex *rest.Client, coin string, sheet *spreadsheet.Sheet) []models.Candle {
-	candlesHist, _ := bitfinex.Candles.History("tETHUSD", "1h")
+	candlesHist, _ := bitfinex.Candles.History(coin, "1h")
 	//log.Println(timestampToTime(candles.Snapshot[0].MTS))
 	id := 1
 	candles := []models.Candle{}
@@ -92,12 +92,12 @@ Place buy and sell orders in Bitfinex depending on the Moving
 Average 20 Day strategy
 ==
 */
-func MovingAverage(sheet *spreadsheet.Sheet, bfxPriv *rest.Client, bfxPub *rest.Client, positions []models.Position) int {
+func MovingAverage(sheet *spreadsheet.Sheet, bfxPriv *rest.Client, bfxPub *rest.Client, positions []models.Position, coin string) int {
 	/* 1. Get data from spreadsheet */
 	var orderID int64
 	var status string
 	data := positions[len(positions)-1]
-	r, _ := bfxPub.Tickers.Get("tETHUSD")
+	r, _ := bfxPub.Tickers.Get(coin)
 
 	if strings.Contains(data.Status, "EXECUTED") || strings.Contains(data.Status, "ACTIVE") {
 		log.Println("--> Error: MA strategy was already applied on the last data.")
@@ -107,20 +107,20 @@ func MovingAverage(sheet *spreadsheet.Sheet, bfxPriv *rest.Client, bfxPub *rest.
 	/* 2. Rebalance current position */
 	if data.Rebalance {
 		log.Println("---> MOVING AVERAGE: Rebalance position")
-		if data.ETH > data.USD {
-			log.Println("---> Sell ETH, Buy USD")
+		if data.CoinUnits > data.USDUnits {
+			log.Println("---> Sell Coin, Buy USD")
 			price := r.Ask + 0.3
 			log.Println("---> Price:", price)
-			amount := -1 * (SToF(data.ETH))
+			amount := -1 * (SToF(data.CoinUnits))
 			log.Println("---> Amount:", amount)
-			orderID, status = SubmitOrder(bfxPriv, price, amount)
+			orderID, status = SubmitOrder(bfxPriv, coin, price, amount)
 		} else {
-			log.Println("---> Buy ETH, Sell USD")
+			log.Println("---> Buy Coin, Sell USD")
 			price := r.Bid - 0.3
 			log.Println("---> Price:", price)
-			amount := SToF(data.USD) / price
+			amount := SToF(data.USDUnits) / price
 			log.Println("---> Amount:", amount)
-			orderID, status = SubmitOrder(bfxPriv, price, amount)
+			orderID, status = SubmitOrder(bfxPriv, coin, price, amount)
 		}
 	} else {
 		log.Println("---> MOVING AVERAGE: No rebalance, HODL position")
@@ -144,9 +144,9 @@ the status of the submitted order.
 ==
 */
 
-func SubmitOrder(bfxPriv *rest.Client, price float64, amount float64) (int64, string) {
+func SubmitOrder(bfxPriv *rest.Client, coin string, price float64, amount float64) (int64, string) {
 	response, err := bfxPriv.Orders.SubmitOrder(&order.NewRequest{
-		Symbol:        "tETHUSD",
+		Symbol:        coin,
 		CID:           time.Now().Unix() / 1000,
 		Amount:        amount,
 		Type:          "EXCHANGE LIMIT",
@@ -180,7 +180,7 @@ func MonitorOrderStatus(bfxPriv *rest.Client, sheet *spreadsheet.Sheet) {
 
 	/* Parameters */
 	statusRow := row.Status
-	ethUnits := SToF(row.ETH)
+	coinUnits := SToF(row.CoinUnits)
 	id := int64(StringToInt(row.OrderID))
 
 	order, err := bfxPriv.Orders.GetHistoryByOrderId(id)
@@ -194,12 +194,12 @@ func MonitorOrderStatus(bfxPriv *rest.Client, sheet *spreadsheet.Sheet) {
 			if strings.Contains(order.Status, "EXECUTED") {
 				log.Println("---> Order EXECUTED: updating spreadsheet")
 				sheet.Update(row.Id, 13, order.Status)
-				if ethUnits > 0 {
-					/* Sell ETH, buy USD */
+				if coinUnits > 0 {
+					/* Sell Coin, buy USD */
 					sheet.Update(row.Id, 9, "0")
 					sheet.Update(row.Id, 11, Float64ToString(-1*order.Price*order.AmountOrig*(1-0.001))) // Need testing
 				} else {
-					/* Buy ETH, sell USD */
+					/* Buy Coin, sell USD */
 					sheet.Update(row.Id, 9, Float64ToString(order.AmountOrig*(1-0.001)))
 					sheet.Update(row.Id, 11, "0")
 				}
@@ -215,13 +215,33 @@ func MonitorOrderStatus(bfxPriv *rest.Client, sheet *spreadsheet.Sheet) {
 Compute moving average. A "moving average" is the average of the last N values. A 20 day moving average is the average of the last 20 closing prices within a specific interval (i.e. hourly, daily)
 ==
 */
-func ComputeMovingAverage(period int, positions []models.Position, sheet *spreadsheet.Sheet) {
+func FillPositions(period int, positions []models.Position, sheet *spreadsheet.Sheet) {
+
+	sort.Sort(sort.Reverse(models.PositionById(positions)))
+
+	log.Println(positions)
+
 	for _, position := range positions {
-		if !position.PriceAboveMA {
-			// Row is not filled
+		if position.MovingAverage == "" {
+			log.Println(position)
 			// Apply all the methods to compute and fill the row
 		} else {
 			// First row unfilled, break from loop
 		}
 	}
+}
+
+func ComputeMovingAverage() {
+}
+
+func FindOpenPrice(timestamp string, instances int, sheet *spreadsheet.Sheet) {
+
+	/* timestamp (i.e. "22:00") */
+	//rows := FetchDB(sheet, timestamp)
+
+	/* number of instances to retrieve */
+	//n := instances
+	//for _, v := range rows {
+	//		sort.Sort(sort.Reverse(models.PositionById(rows)))
+	//}
 }
