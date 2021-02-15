@@ -28,11 +28,8 @@ Current version: 1.3.
 13. Create blank spreadsheet for the project
 14. Reorganize spreadsheet to reflect current value of holdings
 
-### V 1.3 - 12/30/2020
-16. Automate computations of the algorithm
-	16.1 Compute moving average function
-	16.2 Rebalance function
-	16.3 Value function
+### V 1.3 - 02/10/2021
+16. Add other cryptocurrencies
 
 ### Other features
 15. Create a new Bitfinex account for the project
