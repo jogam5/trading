@@ -75,7 +75,7 @@ func WriteCandles(candles []models.Candle, sheet *spreadsheet.Sheet) {
 
 		if found == false {
 			/* Write new candle */
-			log.Println("--> New candle:", candle)
+			//log.Println("--> New candle:", candle)
 			sheet.Update(beginRow, 0, candle.Timestamp)
 			sheet.Update(beginRow, 1, candle.Time)
 			sheet.Update(beginRow, 2, candle.Open)
@@ -84,12 +84,13 @@ func WriteCandles(candles []models.Candle, sheet *spreadsheet.Sheet) {
 		}
 	}
 	sheet.Synchronize()
+	log.Println("--> Candles Updated")
 }
 
 /*
 ==
 Place buy and sell orders in Bitfinex depending on the Moving
-Average 20 Day strategy
+Average strategy
 ==
 */
 func MovingAverage(sheet *spreadsheet.Sheet, bfxPriv *rest.Client, bfxPub *rest.Client, positions []models.Position, coin string) int {
@@ -174,8 +175,8 @@ gets EXECUTED
 ==
 */
 
-func MonitorOrderStatus(bfxPriv *rest.Client, sheet *spreadsheet.Sheet) {
-	positions := QueryDB(sheet, "22:00:00")
+func MonitorOrderStatus(bfxPriv *rest.Client, sheet *spreadsheet.Sheet, timestamp string) {
+	positions := QueryDB(sheet, timestamp)
 	row := positions[len(positions)-1]
 
 	/* Parameters */
@@ -229,19 +230,4 @@ func FillPositions(period int, positions []models.Position, sheet *spreadsheet.S
 			// First row unfilled, break from loop
 		}
 	}
-}
-
-func ComputeMovingAverage() {
-}
-
-func FindOpenPrice(timestamp string, instances int, sheet *spreadsheet.Sheet) {
-
-	/* timestamp (i.e. "22:00") */
-	//rows := FetchDB(sheet, timestamp)
-
-	/* number of instances to retrieve */
-	//n := instances
-	//for _, v := range rows {
-	//		sort.Sort(sort.Reverse(models.PositionById(rows)))
-	//}
 }

@@ -29,4 +29,7 @@ func main() {
 	candlesLINK := spreadsheet.GetCandles(bfxPub, "tLINK:USD", sheetLINK)
 	spreadsheet.WriteCandles(candlesLINK, sheetLINK)
 
+	sheetADA, _ := sh.SheetByTitle("ADA")
+	candlesADA := spreadsheet.GetCandles(bfxPub, "tADAUSD", sheetADA)
+	spreadsheet.WriteCandles(candlesADA, sheetADA)
 }
