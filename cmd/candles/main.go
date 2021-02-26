@@ -32,4 +32,24 @@ func main() {
 	sheetADA, _ := sh.SheetByTitle("ADA")
 	candlesADA := spreadsheet.GetCandles(bfxPub, "tADAUSD", sheetADA)
 	spreadsheet.WriteCandles(candlesADA, sheetADA)
+
+	sheetALGO, _ := sh.SheetByTitle("ALGO")
+	candlesALGO := spreadsheet.GetCandles(bfxPub, "tALGUSD", sheetALGO)
+	spreadsheet.WriteCandles(candlesALGO, sheetALGO)
+
+	sheetATOM, _ := sh.SheetByTitle("ATOM")
+	candlesATOM := spreadsheet.GetCandles(bfxPub, "tATOUSD", sheetATOM)
+	spreadsheet.WriteCandles(candlesATOM, sheetATOM)
+
+	sheetDOT, _ := sh.SheetByTitle("DOT")
+	candlesDOT := spreadsheet.GetCandles(bfxPub, "tDOTUSD", sheetDOT)
+	spreadsheet.WriteCandles(candlesDOT, sheetDOT)
+
+	sheetEOS, _ := sh.SheetByTitle("EOS")
+	candlesEOS := spreadsheet.GetCandles(bfxPub, "tEOSUSD", sheetEOS)
+	spreadsheet.WriteCandles(candlesEOS, sheetEOS)
+
+	sheetETC, _ := sh.SheetByTitle("ETC")
+	candlesETC := spreadsheet.GetCandles(bfxPub, "tETCUSD", sheetETC)
+	spreadsheet.WriteCandles(candlesETC, sheetETC)
 }
