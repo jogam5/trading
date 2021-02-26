@@ -33,6 +33,8 @@ func main() {
 	candlesADA := spreadsheet.GetCandles(bfxPub, "tADAUSD", sheetADA)
 	spreadsheet.WriteCandles(candlesADA, sheetADA)
 
+	/* Second Batch */
+
 	sheetALGO, _ := sh.SheetByTitle("ALGO")
 	candlesALGO := spreadsheet.GetCandles(bfxPub, "tALGUSD", sheetALGO)
 	spreadsheet.WriteCandles(candlesALGO, sheetALGO)
@@ -52,4 +54,27 @@ func main() {
 	sheetETC, _ := sh.SheetByTitle("ETC")
 	candlesETC := spreadsheet.GetCandles(bfxPub, "tETCUSD", sheetETC)
 	spreadsheet.WriteCandles(candlesETC, sheetETC)
+
+	/* Third Batch */
+
+	sheetOMG, _ := sh.SheetByTitle("OMG")
+	candlesOMG := spreadsheet.GetCandles(bfxPub, "tOMGUSD", sheetOMG)
+	spreadsheet.WriteCandles(candlesOMG, sheetOMG)
+
+	sheetXMR, _ := sh.SheetByTitle("XMR")
+	candlesXMR := spreadsheet.GetCandles(bfxPub, "tXMRUSD", sheetXMR)
+	spreadsheet.WriteCandles(candlesXMR, sheetXMR)
+
+	sheetXRP, _ := sh.SheetByTitle("XRP")
+	candlesXRP := spreadsheet.GetCandles(bfxPub, "tXRPUSD", sheetXRP)
+	spreadsheet.WriteCandles(candlesXRP, sheetXRP)
+
+	sheetXTZ, _ := sh.SheetByTitle("XTZ")
+	candlesXTZ := spreadsheet.GetCandles(bfxPub, "tXTZUSD", sheetXTZ)
+	spreadsheet.WriteCandles(candlesXTZ, sheetXTZ)
+
+	sheetZEC, _ := sh.SheetByTitle("ZEC")
+	candlesZEC := spreadsheet.GetCandles(bfxPub, "tZECUSD", sheetZEC)
+	spreadsheet.WriteCandles(candlesZEC, sheetZEC)
+
 }

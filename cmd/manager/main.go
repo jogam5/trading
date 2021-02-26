@@ -26,7 +26,7 @@ func main() {
 
 	/* ETH */
 	sheetETH, _ := sh.SheetByTitle("ETH")
-	positionsETH := spreadsheet.QueryDB(sheetETH, "22:00:00")
+	positionsETH := spreadsheet.QueryDB(sheetETH, "18:00:00")
 	spreadsheet.MovingAverage(sheetETH, bfxPriv, bfxPub, positionsETH, "tETHUSD")
 
 	/* BTC */
