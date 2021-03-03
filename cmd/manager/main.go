@@ -40,10 +40,21 @@ func main() {
 	spreadsheet.MovingAverage(sheetLTC, bfxPriv, bfxPub, positionsLTC, "tLTCUSD")
 	*/
 
-	/*sheetLINK, _ := sh.SheetByTitle("LINK")
+	sheetLINK, _ := sh.SheetByTitle("LINK")
 	positionsLINK := spreadsheet.QueryDB(sheetLINK, "18:00:00")
-	spreadsheet.MovingAverage(sheetLINK, bfxPriv, bfxPub, positionsLINK, "tLINKUSD")
-	*/
+	spreadsheet.MovingAverage(sheetLINK, bfxPriv, bfxPub, positionsLINK, "tLINK:USD")
+
+	sheetALGO, _ := sh.SheetByTitle("ALGO")
+	positionsALGO := spreadsheet.QueryDB(sheetALGO, "18:00:00")
+	spreadsheet.MovingAverage(sheetALGO, bfxPriv, bfxPub, positionsALGO, "tALGUSD")
+
+	sheetATOM, _ := sh.SheetByTitle("ATOM")
+	positionsATOM := spreadsheet.QueryDB(sheetATOM, "18:00:00")
+	spreadsheet.MovingAverage(sheetATOM, bfxPriv, bfxPub, positionsATOM, "tATOUSD")
+
+	sheetDOT, _ := sh.SheetByTitle("DOT")
+	positionsDOT := spreadsheet.QueryDB(sheetDOT, "18:00:00")
+	spreadsheet.MovingAverage(sheetDOT, bfxPriv, bfxPub, positionsDOT, "tDOTUSD")
 
 	//spreadsheet.SubmitOrder(bfxPriv, "tLINK:USD", 25.0, 0.2)
 }

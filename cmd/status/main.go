@@ -30,4 +30,12 @@ func main() {
 	sheetADA, _ := sh.SheetByTitle("ADA")
 	spreadsheet.MonitorOrderStatus(bfxPriv, sheetADA, timestamp)
 
+	sheetALGO, _ := sh.SheetByTitle("ALGO")
+	spreadsheet.MonitorOrderStatus(bfxPriv, sheetALGO, timestamp)
+
+	sheetATOM, _ := sh.SheetByTitle("ATOM")
+	spreadsheet.MonitorOrderStatus(bfxPriv, sheetATOM, timestamp)
+
+	sheetDOT, _ := sh.SheetByTitle("DOT")
+	spreadsheet.MonitorOrderStatus(bfxPriv, sheetDOT, timestamp)
 }
