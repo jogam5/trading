@@ -100,6 +100,14 @@ func MovingAverage(sheet *spreadsheet.Sheet, bfxPriv *rest.Client, bfxPub *rest.
 	data := positions[len(positions)-1]
 	r, _ := bfxPub.Tickers.Get(coin)
 
+	/* PriceDelta discrimination for trades below 5 USD per coin */
+	priceDelta := 0.3
+	if r.Ask < 5.0 {
+		priceDelta = 0.003
+	}
+
+	log.Println("---> Coin:", coin)
+
 	if strings.Contains(data.Status, "EXECUTED") || strings.Contains(data.Status, "ACTIVE") {
 		log.Println("--> Error: MA strategy was already applied on the last data.")
 		return 1
@@ -110,14 +118,14 @@ func MovingAverage(sheet *spreadsheet.Sheet, bfxPriv *rest.Client, bfxPub *rest.
 		log.Println("---> MOVING AVERAGE: Rebalance position")
 		if data.CoinUnits > data.USDUnits {
 			log.Println("---> Sell Coin, Buy USD")
-			price := r.Ask + 0.3
+			price := r.Ask + priceDelta
 			log.Println("---> Price:", price)
 			amount := -1 * (SToF(data.CoinUnits))
 			log.Println("---> Amount:", amount)
 			orderID, status = SubmitOrder(bfxPriv, coin, price, amount)
 		} else {
 			log.Println("---> Buy Coin, Sell USD")
-			price := r.Bid - 0.3
+			price := r.Bid - priceDelta
 			log.Println("---> Price:", price)
 			amount := SToF(data.USDUnits) / price
 			log.Println("---> Amount:", amount)
