@@ -34,6 +34,7 @@ Fetch current price candles from Bitfinex and update table
 ==
 */
 func GetCandles(bitfinex *rest.Client, coin string, sheet *spreadsheet.Sheet) []models.Candle {
+	log.Println("--->", coin)
 	candlesHist, _ := bitfinex.Candles.History(coin, "1h")
 	//log.Println(timestampToTime(candles.Snapshot[0].MTS))
 	id := 1
