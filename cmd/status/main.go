@@ -13,7 +13,7 @@ func main() {
 	sh := client.ConnectionGoogle("1MK6SUfDrVHQXWL7pUZzS3yxkWuIDecAvHqxXpSKHWL8")
 	bfxPriv, _ := client.ConnectionBitfinex()
 
-	timestamp := "22:00:00"
+	timestamp := "18:00:00"
 
 	sheetETH, _ := sh.SheetByTitle("ETH")
 	spreadsheet.MonitorOrderStatus(bfxPriv, sheetETH, timestamp)
@@ -38,4 +38,8 @@ func main() {
 
 	sheetDOT, _ := sh.SheetByTitle("DOT")
 	spreadsheet.MonitorOrderStatus(bfxPriv, sheetDOT, timestamp)
+
+	sheetXRP, _ := sh.SheetByTitle("XRP")
+	spreadsheet.MonitorOrderStatus(bfxPriv, sheetXRP, timestamp)
+
 }

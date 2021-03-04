@@ -35,10 +35,9 @@ func main() {
 	spreadsheet.MovingAverage(sheetBTC, bfxPriv, bfxPub, positionsBTC, "tBTCUSD")
 	*/
 
-	/*sheetLTC, _ := sh.SheetByTitle("LTC")
+	sheetLTC, _ := sh.SheetByTitle("LTC")
 	positionsLTC := spreadsheet.QueryDB(sheetLTC, "18:00:00")
 	spreadsheet.MovingAverage(sheetLTC, bfxPriv, bfxPub, positionsLTC, "tLTCUSD")
-	*/
 
 	sheetLINK, _ := sh.SheetByTitle("LINK")
 	positionsLINK := spreadsheet.QueryDB(sheetLINK, "18:00:00")
@@ -55,6 +54,10 @@ func main() {
 	sheetDOT, _ := sh.SheetByTitle("DOT")
 	positionsDOT := spreadsheet.QueryDB(sheetDOT, "18:00:00")
 	spreadsheet.MovingAverage(sheetDOT, bfxPriv, bfxPub, positionsDOT, "tDOTUSD")
+
+	sheetXRP, _ := sh.SheetByTitle("XRP")
+	positionsXRP := spreadsheet.QueryDB(sheetXRP, "18:00:00")
+	spreadsheet.MovingAverage(sheetXRP, bfxPriv, bfxPub, positionsXRP, "tXRPUSD")
 
 	//spreadsheet.SubmitOrder(bfxPriv, "tLINK:USD", 25.0, 0.2)
 }
