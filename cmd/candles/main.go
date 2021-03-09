@@ -17,6 +17,10 @@ func main() {
 	candlesETH := spreadsheet.GetCandles(bfxPub, "tETHUSD", sheetETH)
 	spreadsheet.WriteCandles(candlesETH, sheetETH)
 
+	sheetETHFund, _ := sh.SheetByTitle("ETH-FUND")
+	candlesETHFund := spreadsheet.GetCandles(bfxPub, "tETHUSD", sheetETHFund)
+	spreadsheet.WriteCandles(candlesETHFund, sheetETHFund)
+
 	sheetBTC, _ := sh.SheetByTitle("BTC")
 	candlesBTC := spreadsheet.GetCandles(bfxPub, "tBTCUSD", sheetBTC)
 	spreadsheet.WriteCandles(candlesBTC, sheetBTC)

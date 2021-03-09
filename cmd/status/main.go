@@ -18,6 +18,9 @@ func main() {
 	sheetETH, _ := sh.SheetByTitle("ETH")
 	spreadsheet.MonitorOrderStatus(bfxPriv, sheetETH, timestamp)
 
+	sheetETHFund, _ := sh.SheetByTitle("ETH-FUND")
+	spreadsheet.MonitorOrderStatus(bfxPriv, sheetETHFund, timestamp)
+
 	sheetBTC, _ := sh.SheetByTitle("BTC")
 	spreadsheet.MonitorOrderStatus(bfxPriv, sheetBTC, timestamp)
 
