@@ -13,6 +13,7 @@ import (
 func main() {
 	_, bfxPub := client.ConnectionBitfinex()
 	sh := client.ConnectionGoogle("1MK6SUfDrVHQXWL7pUZzS3yxkWuIDecAvHqxXpSKHWL8")
+
 	sheetETH, _ := sh.SheetByTitle("ETH")
 	candlesETH := spreadsheet.GetCandles(bfxPub, "tETHUSD", sheetETH)
 	spreadsheet.WriteCandles(candlesETH, sheetETH)

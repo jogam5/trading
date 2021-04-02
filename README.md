@@ -31,6 +31,9 @@ Current version: 1.3.
 ### V 1.3 - 02/10/2021
 16. Add other cryptocurrencies
 
+### V 1.4 - 03/30/2021
+17. Depict portfolio ETHF400 in website
+
 ### Other features
 15. Create a new Bitfinex account for the project
 17. Send notification when the Rebalance has taken place (SMS, Email, etc)

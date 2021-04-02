@@ -117,7 +117,7 @@ func MovingAverage(sheet *spreadsheet.Sheet, bfxPriv *rest.Client, bfxPub *rest.
 	/* 2. Rebalance current position */
 	if data.Rebalance {
 		log.Println("---> MOVING AVERAGE: Rebalance position")
-		if data.CoinUnits > data.USDUnits {
+		if data.CoinUnits > data.USDUnits { // Add constraint here
 			log.Println("---> Sell Coin, Buy USD")
 			price := r.Ask + priceDelta
 			log.Println("---> Price:", price)
@@ -185,6 +185,7 @@ gets EXECUTED
 */
 
 func MonitorOrderStatus(bfxPriv *rest.Client, sheet *spreadsheet.Sheet, timestamp string) {
+	// Bug: if previous 18:00 was not executed, it never updates
 	positions := QueryDB(sheet, timestamp)
 	row := positions[len(positions)-1]
 
