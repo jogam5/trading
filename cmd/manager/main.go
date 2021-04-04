@@ -64,5 +64,9 @@ func main() {
 	positionsXRP := spreadsheet.QueryDB(sheetXRP, "18:00:00")
 	spreadsheet.MovingAverage(sheetXRP, bfxPriv, bfxPub, positionsXRP, "tXRPUSD")
 
+	sheetUNI, _ := sh.SheetByTitle("UNI")
+	positionsUNI := spreadsheet.QueryDB(sheetUNI, "18:00:00")
+	spreadsheet.MovingAverage(sheetUNI, bfxPriv, bfxPub, positionsUNI, "tUNIUSD")
+
 	//spreadsheet.SubmitOrder(bfxPriv, "tLINK:USD", 25.0, 0.2)
 }
