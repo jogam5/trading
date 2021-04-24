@@ -16,6 +16,7 @@ package main
 import (
 	"log"
 	"trading/client"
+	"trading/models"
 	"trading/spreadsheet"
 )
 
@@ -24,53 +25,23 @@ func main() {
 	log.Println(bfxPriv)
 	sh := client.ConnectionGoogle("1MK6SUfDrVHQXWL7pUZzS3yxkWuIDecAvHqxXpSKHWL8")
 
-	/* ETH */
-	sheetETH, _ := sh.SheetByTitle("ETH")
-	positionsETH := spreadsheet.QueryDB(sheetETH, "18:00:00")
-	spreadsheet.MovingAverage(sheetETH, bfxPriv, bfxPub, positionsETH, "tETHUSD")
+	timestamp := "19:00:00"
+	assets := []models.Asset{
+		models.Asset{Name: "ETH", QueryTag: "tETHUSD"},
+		models.Asset{Name: "LTC", QueryTag: "tLTCUSD"},
+		models.Asset{Name: "LINK", QueryTag: "tLINK:USD"},
+		models.Asset{Name: "ALGO", QueryTag: "tALGUSD"},
+		models.Asset{Name: "ATOM", QueryTag: "tATOUSD"},
+		models.Asset{Name: "DOT", QueryTag: "tDOTUSD"},
+		models.Asset{Name: "XRP", QueryTag: "tXRPUSD"},
+	}
 
-	/* ETH FUND*/
-	sheetETHFund, _ := sh.SheetByTitle("ETH-FUND")
-	positionsETHFund := spreadsheet.QueryDB(sheetETHFund, "18:00:00")
-	spreadsheet.MovingAverage(sheetETHFund, bfxPriv, bfxPub, positionsETHFund, "tETHUSD")
-
-	/* BTC */
-	/*sheetBTC, _ := sh.SheetByTitle("BTC")
-	positionsBTC := spreadsheet.QueryDB(sheetBTC, "18:00:00")
-	spreadsheet.MovingAverage(sheetBTC, bfxPriv, bfxPub, positionsBTC, "tBTCUSD")
-	*/
-
-	sheetLTC, _ := sh.SheetByTitle("LTC")
-	positionsLTC := spreadsheet.QueryDB(sheetLTC, "18:00:00")
-	spreadsheet.MovingAverage(sheetLTC, bfxPriv, bfxPub, positionsLTC, "tLTCUSD")
-
-	sheetLINK, _ := sh.SheetByTitle("LINK")
-	positionsLINK := spreadsheet.QueryDB(sheetLINK, "18:00:00")
-	spreadsheet.MovingAverage(sheetLINK, bfxPriv, bfxPub, positionsLINK, "tLINK:USD")
-
-	sheetALGO, _ := sh.SheetByTitle("ALGO")
-	positionsALGO := spreadsheet.QueryDB(sheetALGO, "18:00:00")
-	spreadsheet.MovingAverage(sheetALGO, bfxPriv, bfxPub, positionsALGO, "tALGUSD")
-
-	sheetATOM, _ := sh.SheetByTitle("ATOM")
-	positionsATOM := spreadsheet.QueryDB(sheetATOM, "18:00:00")
-	spreadsheet.MovingAverage(sheetATOM, bfxPriv, bfxPub, positionsATOM, "tATOUSD")
-
-	sheetDOT, _ := sh.SheetByTitle("DOT")
-	positionsDOT := spreadsheet.QueryDB(sheetDOT, "18:00:00")
-	spreadsheet.MovingAverage(sheetDOT, bfxPriv, bfxPub, positionsDOT, "tDOTUSD")
-
-	sheetXRP, _ := sh.SheetByTitle("XRP")
-	positionsXRP := spreadsheet.QueryDB(sheetXRP, "18:00:00")
-	spreadsheet.MovingAverage(sheetXRP, bfxPriv, bfxPub, positionsXRP, "tXRPUSD")
-
-	sheetUNI, _ := sh.SheetByTitle("UNI")
-	positionsUNI := spreadsheet.QueryDB(sheetUNI, "18:00:00")
-	spreadsheet.MovingAverage(sheetUNI, bfxPriv, bfxPub, positionsUNI, "tUNIUSD")
-
-	sheetSNX, _ := sh.SheetByTitle("SNX")
-	positionsSNX := spreadsheet.QueryDB(sheetSNX, "18:00:00")
-	spreadsheet.MovingAverage(sheetSNX, bfxPriv, bfxPub, positionsSNX, "tSNXUSD")
+	for _, v := range assets {
+		log.Println(v.Name)
+		sheet, _ := sh.SheetByTitle(v.Name)
+		positions := spreadsheet.QueryDB(sheet, timestamp)
+		spreadsheet.MovingAverage(sheet, bfxPriv, bfxPub, positions, v.QueryTag)
+	}
 
 	//spreadsheet.SubmitOrder(bfxPriv, "tLINK:USD", 25.0, 0.2)
 }
