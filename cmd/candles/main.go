@@ -1,85 +1,63 @@
 /*
 This program contains a function that is executed via a cron job.
 Every specific time the program retrieves candle data from Bitfinex.
+
+Improvements:
+1. Update only at market open
 */
 
 package main
 
 import (
+	"log"
 	"trading/client"
+	"trading/models"
 	"trading/spreadsheet"
 )
 
 func main() {
 	_, bfxPub := client.ConnectionBitfinex()
+
+	log.Println("### -> Regular Fund")
 	sh := client.ConnectionGoogle("1MK6SUfDrVHQXWL7pUZzS3yxkWuIDecAvHqxXpSKHWL8")
 
-	sheetETH, _ := sh.SheetByTitle("ETH")
-	candlesETH := spreadsheet.GetCandles(bfxPub, "tETHUSD", sheetETH)
-	spreadsheet.WriteCandles(candlesETH, sheetETH)
+	assets := []models.Asset{
+		models.Asset{Name: "ETH", QueryTag: "tETHUSD"},
+		models.Asset{Name: "LTC", QueryTag: "tLTCUSD"},
+		models.Asset{Name: "LINK", QueryTag: "tLINK:USD"},
+		models.Asset{Name: "ALGO", QueryTag: "tALGUSD"},
+		models.Asset{Name: "ATOM", QueryTag: "tATOUSD"},
+		models.Asset{Name: "DOT", QueryTag: "tDOTUSD"},
+		models.Asset{Name: "XRP", QueryTag: "tXRPUSD"},
+		models.Asset{Name: "BTC", QueryTag: "tBTCUSD"},
+		models.Asset{Name: "ADA", QueryTag: "tADAUSD"},
+		models.Asset{Name: "UNI", QueryTag: "tUNIUSD"},
+	}
 
-	sheetETHFund, _ := sh.SheetByTitle("ETH-FUND")
-	candlesETHFund := spreadsheet.GetCandles(bfxPub, "tETHUSD", sheetETHFund)
-	spreadsheet.WriteCandles(candlesETHFund, sheetETHFund)
+	for _, v := range assets {
+		log.Println(v.Name)
+		sheet, _ := sh.SheetByTitle(v.Name)
+		candles := spreadsheet.GetCandles(bfxPub, v.QueryTag, sheet)
+		spreadsheet.WriteCandles(candles, sheet)
+	}
 
-	sheetBTC, _ := sh.SheetByTitle("BTC")
-	candlesBTC := spreadsheet.GetCandles(bfxPub, "tBTCUSD", sheetBTC)
-	spreadsheet.WriteCandles(candlesBTC, sheetBTC)
+	/* CS Fund */
+	log.Println("### -> CS Fund")
+	sh = client.ConnectionGoogle("1Zp0jUHy5l2WdY6Je7_ltca7DVgPBE6VO8kDRtYxOcwo")
 
-	sheetLTC, _ := sh.SheetByTitle("LTC")
-	candlesLTC := spreadsheet.GetCandles(bfxPub, "tLTCUSD", sheetLTC)
-	spreadsheet.WriteCandles(candlesLTC, sheetLTC)
+	assets = []models.Asset{
+		models.Asset{Name: "ETH", QueryTag: "tETHUSD"},
+		models.Asset{Name: "LTC", QueryTag: "tLTCUSD"},
+		models.Asset{Name: "OMG", QueryTag: "tOMGUSD"},
+		models.Asset{Name: "XTZ", QueryTag: "tXTZUSD"},
+		models.Asset{Name: "BTC", QueryTag: "tBTCUSD"},
+		models.Asset{Name: "LINK", QueryTag: "tLINK:USD"},
+	}
 
-	sheetLINK, _ := sh.SheetByTitle("LINK")
-	candlesLINK := spreadsheet.GetCandles(bfxPub, "tLINK:USD", sheetLINK)
-	spreadsheet.WriteCandles(candlesLINK, sheetLINK)
-
-	sheetADA, _ := sh.SheetByTitle("ADA")
-	candlesADA := spreadsheet.GetCandles(bfxPub, "tADAUSD", sheetADA)
-	spreadsheet.WriteCandles(candlesADA, sheetADA)
-
-	/* Second Batch */
-
-	sheetALGO, _ := sh.SheetByTitle("ALGO")
-	candlesALGO := spreadsheet.GetCandles(bfxPub, "tALGUSD", sheetALGO)
-	spreadsheet.WriteCandles(candlesALGO, sheetALGO)
-
-	sheetATOM, _ := sh.SheetByTitle("ATOM")
-	candlesATOM := spreadsheet.GetCandles(bfxPub, "tATOUSD", sheetATOM)
-	spreadsheet.WriteCandles(candlesATOM, sheetATOM)
-
-	sheetDOT, _ := sh.SheetByTitle("DOT")
-	candlesDOT := spreadsheet.GetCandles(bfxPub, "tDOTUSD", sheetDOT)
-	spreadsheet.WriteCandles(candlesDOT, sheetDOT)
-
-	sheetEOS, _ := sh.SheetByTitle("EOS")
-	candlesEOS := spreadsheet.GetCandles(bfxPub, "tEOSUSD", sheetEOS)
-	spreadsheet.WriteCandles(candlesEOS, sheetEOS)
-
-	sheetETC, _ := sh.SheetByTitle("ETC")
-	candlesETC := spreadsheet.GetCandles(bfxPub, "tETCUSD", sheetETC)
-	spreadsheet.WriteCandles(candlesETC, sheetETC)
-
-	/* Third Batch */
-
-	sheetOMG, _ := sh.SheetByTitle("OMG")
-	candlesOMG := spreadsheet.GetCandles(bfxPub, "tOMGUSD", sheetOMG)
-	spreadsheet.WriteCandles(candlesOMG, sheetOMG)
-
-	sheetXMR, _ := sh.SheetByTitle("XMR")
-	candlesXMR := spreadsheet.GetCandles(bfxPub, "tXMRUSD", sheetXMR)
-	spreadsheet.WriteCandles(candlesXMR, sheetXMR)
-
-	sheetXRP, _ := sh.SheetByTitle("XRP")
-	candlesXRP := spreadsheet.GetCandles(bfxPub, "tXRPUSD", sheetXRP)
-	spreadsheet.WriteCandles(candlesXRP, sheetXRP)
-
-	sheetXTZ, _ := sh.SheetByTitle("XTZ")
-	candlesXTZ := spreadsheet.GetCandles(bfxPub, "tXTZUSD", sheetXTZ)
-	spreadsheet.WriteCandles(candlesXTZ, sheetXTZ)
-
-	sheetZEC, _ := sh.SheetByTitle("ZEC")
-	candlesZEC := spreadsheet.GetCandles(bfxPub, "tZECUSD", sheetZEC)
-	spreadsheet.WriteCandles(candlesZEC, sheetZEC)
-
+	for _, v := range assets {
+		log.Println(v.Name)
+		sheet, _ := sh.SheetByTitle(v.Name)
+		candles := spreadsheet.GetCandles(bfxPub, v.QueryTag, sheet)
+		spreadsheet.WriteCandles(candles, sheet)
+	}
 }
