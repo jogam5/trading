@@ -2,9 +2,7 @@
 
 ATG is a Go algorithm for automated trading.
 
-Performance of the algorithm can be seen here: [jgislas.com/mscs](https://jgislas.com/mscs).
-
-Current version: 1.3.
+Current version: 1.5.
 
 ## Roadmap 
 
@@ -12,7 +10,7 @@ Current version: 1.3.
 1. Choose where to fetch the prices (Source)
 2. Make connection between Source and Google Spredsheets
 3. Automate the store of data each hour (hourly price from Source)
-4. Enter formulas for computing the Moving Average 20 day
+4. Enter formulas for computing the Moving Average
 
 ### V 1.1 - 09/25/2020
 5. Read actionable data from Spreadsheet
@@ -29,17 +27,15 @@ Current version: 1.3.
 14. Reorganize spreadsheet to reflect current value of holdings
 
 ### V 1.3 - 02/10/2021
-16. Add other cryptocurrencies
+16. Add other cryptocurrencies (LTC, XRP, BTC, DOT, LINK, ALGO, ATOM)
 
-### V 1.4 - 03/30/2021
-17. Depict portfolio ETHF400 in website
+### V 1.4 - 05/01/2021
+17. Add portfolio ETHF400 in a different spreadsheet
 
 ### Other features
 15. Create a new Bitfinex account for the project
 17. Send notification when the Rebalance has taken place (SMS, Email, etc)
 18. Build a simple website to show how the strategy performs against Buy and Hold.
 19. Instead of rebalancing to USD, use CUSD (the Compound's version of USD) so that an interest can be accrued on the amount of USD.
-20. Instead of rebalancing to ETH, find a way to accrue some interest in Compound or AAVE.
-21. Testing the algorithm on other altcoins.
-22. Generalize the algorithm so that it can be used for other periods of the Moving Average (i.e. 1 Week Moving Average for long term strategies in Bitcoin)
+22. Generalize the algorithm so that it can be used for other periods of the Moving Average
 23. Use a Database instead of relying on Google Spreadsheet to store the data.
