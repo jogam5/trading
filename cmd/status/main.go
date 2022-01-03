@@ -1,5 +1,6 @@
 /*
-This program contains a function that is executed via a cron job. Every specific time the program monitors if an order has been executed and updates the spreadsheet accordingly.
+This program contains a function that is executed via a cron job.
+Every specific time the program monitors if an order has been executed and updates the spreadsheet accordingly.
 */
 
 package main

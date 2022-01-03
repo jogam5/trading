@@ -8,15 +8,34 @@ import (
 	//"github.com/bitfinexcom/bitfinex-api-go/v2"
 	"github.com/bitfinexcom/bitfinex-api-go/v2/rest"
 	"gopkg.in/Iwark/spreadsheet.v2"
+
 	//"io"
 	//"io/ioutil"
 	"log"
 	//"os"
 	//"path/filepath"
+	"context"
+	"fmt"
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/jackc/pgx/v4/pgxpool"
 )
+
+/*
+1. Create a table an asset, DONE
+2. Insert new row without duplications by using the timestamp, DONE
+3. Create a table for the rest of assets
+4. Work with timestamp or not?
+5. Use new candles with all methods to perform operations
+*/
+
+func connectToDB() {
+	conn, _ := pgxpool.Connect(context.Background(), "postgres://postgres:123@localhost:5432/trading_engine")
+	fmt.Println(conn)
+	defer conn.Close()
+}
 
 /*
 ==
@@ -43,16 +62,43 @@ func GetCandles(bitfinex *rest.Client, coin string, sheet *spreadsheet.Sheet) []
 		var c models.Candle
 		c = models.Candle{
 			Id:        id,
+			Asset:     coin,
 			Timestamp: Int64ToString(v.MTS),
 			Time:      timestampToTime(v.MTS),
 			Open:      Float64ToString(v.Open),
 			Close:     Float64ToString(v.Close),
+			High:      Float64ToString(v.High),
+			Low:       Float64ToString(v.Low),
+			Volume:    Float64ToString(v.Volume),
 		}
 		candles = append(candles, c)
 		id = id + 1
 	}
 	sort.Sort(sort.Reverse(models.ById(candles)))
 	return candles
+}
+
+func InsertCandles(asset string, candles []models.Candle, conn *pgxpool.Pool) {
+	table_name := "candles_" + asset
+	var lastTimestamp string
+	err := conn.QueryRow(context.Background(), "SELECT timestamp FROM "+table_name+" ORDER BY ID DESC LIMIT 1").Scan(&lastTimestamp)
+	if err != nil {
+		return
+	}
+	//log.Println(lastTimeStamp)
+
+	insert_st := "INSERT INTO " + table_name + "(ASSET, TIMESTAMP, OPEN, CLOSE, HIGH, LOW, VOLUME) VALUES($1, $2, $3, $4, $5, $6, $7)"
+	for _, candle := range candles {
+		if candle.Timestamp > lastTimestamp {
+			if _, err := conn.Exec(context.Background(), insert_st, candle.Asset, candle.Timestamp, candle.Open, candle.Close, candle.High, candle.Low, candle.Volume); err != nil {
+				log.Println("Unable to insert due to", err)
+				return
+			}
+			log.Println("Insertion success")
+		} else {
+			log.Println("Row already inserted")
+		}
+	}
 }
 
 /*

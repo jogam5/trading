@@ -2,10 +2,14 @@ package models
 
 type Candle struct {
 	Id        int
+	Asset     string
 	Timestamp string
 	Time      string
 	Open      string
 	Close     string
+	High      string
+	Low       string
+	Volume    string
 }
 
 type ById []Candle
