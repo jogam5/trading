@@ -40,6 +40,7 @@ func connectToDB() {
 /*
 ==
 Convert Unix milliseconds to time.Time
+UPDATE: No new changes required here.
 ==
 */
 func timestampToTime(msTime int64) string {
@@ -50,6 +51,8 @@ func timestampToTime(msTime int64) string {
 /*
 ==
 Fetch current price candles from Bitfinex and update table
+
+UPDATE: No new changes required here.
 ==
 */
 func GetCandles(bitfinex *rest.Client, coin string, sheet *spreadsheet.Sheet) []models.Candle {
@@ -78,15 +81,19 @@ func GetCandles(bitfinex *rest.Client, coin string, sheet *spreadsheet.Sheet) []
 	return candles
 }
 
+/*
+==
+Insert candles in the DB
+
+UPDATE: No new changes required here.
+==
+*/
 func InsertCandles(asset string, candles []models.Candle, conn *pgxpool.Pool) {
 	table_name := "candles_" + asset
 	var lastTimestamp string
-	err := conn.QueryRow(context.Background(), "SELECT timestamp FROM "+table_name+" ORDER BY ID DESC LIMIT 1").Scan(&lastTimestamp)
-	if err != nil {
-		return
+	if err := conn.QueryRow(context.Background(), "SELECT timestamp FROM "+table_name+" ORDER BY ID DESC LIMIT 1").Scan(&lastTimestamp); err != nil {
+		log.Println(err)
 	}
-	//log.Println(lastTimeStamp)
-
 	insert_st := "INSERT INTO " + table_name + "(ASSET, TIMESTAMP, OPEN, CLOSE, HIGH, LOW, VOLUME) VALUES($1, $2, $3, $4, $5, $6, $7)"
 	for _, candle := range candles {
 		if candle.Timestamp > lastTimestamp {
@@ -95,15 +102,15 @@ func InsertCandles(asset string, candles []models.Candle, conn *pgxpool.Pool) {
 				return
 			}
 			log.Println("Insertion success")
-		} else {
-			log.Println("Row already inserted")
 		}
 	}
+	log.Println("--> Candles Updated")
 }
 
 /*
 ==
 Receive candles and write them in spreadsheet
+UPDATE: this will be deprecated.
 ==
 */
 func WriteCandles(candles []models.Candle, sheet *spreadsheet.Sheet) {
@@ -138,6 +145,8 @@ func WriteCandles(candles []models.Candle, sheet *spreadsheet.Sheet) {
 ==
 Place buy and sell orders in Bitfinex depending on the Moving
 Average strategy
+
+UPDATE: Requires update.
 ==
 */
 func MovingAverage(sheet *spreadsheet.Sheet, bfxPriv *rest.Client, bfxPub *rest.Client, positions []models.Position, coin string) int {
@@ -197,6 +206,8 @@ func MovingAverage(sheet *spreadsheet.Sheet, bfxPriv *rest.Client, bfxPub *rest.
 Receives the price and the amount in order to submit an order in
 Bitfinex and returns the orderID, which can be used to check
 the status of the submitted order.
+
+UPDATE: No require update.
 ==
 */
 
@@ -226,7 +237,9 @@ func SubmitOrder(bfxPriv *rest.Client, coin string, price float64, amount float6
 /*
 ==
 Checks the status of the order an updates the spreadsheet if an order
-gets EXECUTED
+gets EXECUTED.
+
+UPDATE: Requires update.
 ==
 */
 
@@ -270,6 +283,8 @@ func MonitorOrderStatus(bfxPriv *rest.Client, sheet *spreadsheet.Sheet, timestam
 /*
 ==
 Compute moving average. A "moving average" is the average of the last N values. A 20 day moving average is the average of the last 20 closing prices within a specific interval (i.e. hourly, daily)
+
+UPDATE: unfinished.
 ==
 */
 func FillPositions(period int, positions []models.Position, sheet *spreadsheet.Sheet) {
